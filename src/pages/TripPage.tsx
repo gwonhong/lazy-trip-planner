@@ -6,6 +6,7 @@ import CollapseHandle from '../components/trip/CollapseHandle'
 import DateSidebar from '../components/trip/DateSidebar'
 import SlotDetail from '../components/trip/SlotDetail'
 import HistoryPanel from '../components/trip/HistoryPanel'
+import MapPanel from '../components/trip/MapPanel'
 
 export default function TripPage() {
   const { id } = useParams<{ id: string }>()
@@ -66,9 +67,7 @@ export default function TripPage() {
 
         {/* Middle panel: map */}
         <div className="flex-1 relative overflow-hidden">
-          <div className="h-full flex items-center justify-center text-slate-600 text-sm">
-            Map panel — Task 11
-          </div>
+          <MapPanel tripId={trip.id} />
         </div>
 
         {/* Collapse handle on the map/history divider */}
