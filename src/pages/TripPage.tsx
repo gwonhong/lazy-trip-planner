@@ -5,6 +5,7 @@ import SettingsModal from '../components/shared/SettingsModal'
 import CollapseHandle from '../components/trip/CollapseHandle'
 import DateSidebar from '../components/trip/DateSidebar'
 import SlotDetail from '../components/trip/SlotDetail'
+import HistoryPanel from '../components/trip/HistoryPanel'
 
 export default function TripPage() {
   const { id } = useParams<{ id: string }>()
@@ -79,9 +80,7 @@ export default function TripPage() {
         {/* Right panel: history */}
         {!historyCollapsed && (
           <div className="w-56 flex-shrink-0 border-l border-slate-800 flex flex-col overflow-hidden">
-            <div className="flex-1 flex items-center justify-center text-slate-600 text-sm">
-              History — Task 10
-            </div>
+            <HistoryPanel tripId={trip.id} />
           </div>
         )}
       </div>
