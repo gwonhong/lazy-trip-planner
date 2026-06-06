@@ -1,0 +1,94 @@
+<h2>Slot label — title only, or title + time?</h2>
+<p class="subtitle">Date already appears in the group header, so each slot only needs its own identifier.</p>
+
+<div class="split">
+
+  <!-- Option A: Title only -->
+  <div class="mockup" data-choice="a" onclick="toggleSelect(this)" style="cursor:pointer;">
+    <div class="mockup-header">A — Title only</div>
+    <div class="mockup-body" style="padding:0;background:#1e293b;border-radius:0 0 6px 6px;">
+      <div style="padding:6px 0;font-size:11px;">
+
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Jun 10 · Mon</div>
+
+        <div style="margin:2px 6px;background:#6366f1;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#a5b4fc;font-size:12px;">⠿</span>
+          <div style="color:white;font-size:11px;font-weight:600;">Seoul city tour</div>
+        </div>
+
+        <div style="margin:2px 6px;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div style="color:#94a3b8;font-size:11px;">Seoul club tour</div>
+        </div>
+
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;border-top:1px solid #334155;padding-top:6px;">Jun 11 · Tue</div>
+
+        <div style="margin:2px 6px;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div style="color:#94a3b8;font-size:11px;">Busan all day tour</div>
+        </div>
+
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;border-top:1px solid #334155;padding-top:6px;">Jun 12 · Wed</div>
+
+        <div style="margin:2px 6px;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div style="color:#94a3b8;font-size:11px;">Hangang picnic</div>
+        </div>
+
+        <div style="margin:8px 6px 4px;border:1px dashed #334155;border-radius:5px;padding:5px 8px;text-align:center;color:#475569;font-size:10px;">+ new slot</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Title + estimated time range -->
+  <div class="mockup" data-choice="b" onclick="toggleSelect(this)" style="cursor:pointer;">
+    <div class="mockup-header">B — Title + from–to time</div>
+    <div class="mockup-body" style="padding:0;background:#1e293b;border-radius:0 0 6px 6px;">
+      <div style="padding:6px 0;font-size:11px;">
+
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Jun 10 · Mon</div>
+
+        <div style="margin:2px 6px;background:#6366f1;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#a5b4fc;font-size:12px;">⠿</span>
+          <div>
+            <div style="color:white;font-size:11px;font-weight:600;">Seoul city tour</div>
+            <div style="color:#a5b4fc;font-size:9px;">09:00 – 13:00</div>
+          </div>
+        </div>
+
+        <div style="margin:2px 6px;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div>
+            <div style="color:#94a3b8;font-size:11px;">Seoul club tour</div>
+            <div style="color:#475569;font-size:9px;">20:00 – 23:00</div>
+          </div>
+        </div>
+
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;border-top:1px solid #334155;padding-top:6px;">Jun 11 · Tue</div>
+
+        <div style="margin:2px 6px;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div>
+            <div style="color:#94a3b8;font-size:11px;">Busan all day tour</div>
+            <div style="color:#475569;font-size:9px;">~8h estimated</div>
+          </div>
+        </div>
+
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;border-top:1px solid #334155;padding-top:6px;">Jun 12 · Wed</div>
+
+        <div style="margin:2px 6px;border-radius:5px;padding:6px 8px;display:flex;align-items:center;gap:6px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div>
+            <div style="color:#94a3b8;font-size:11px;">Hangang picnic</div>
+            <div style="color:#475569;font-size:9px;">~2h estimated</div>
+          </div>
+        </div>
+
+        <div style="margin:8px 6px 4px;border:1px dashed #334155;border-radius:5px;padding:5px 8px;text-align:center;color:#475569;font-size:10px;">+ new slot</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:12px;">Option B shows user-set start/end times when available, falling back to <em>~Xh estimated</em> (summed from place durations) when no times are set.</p>

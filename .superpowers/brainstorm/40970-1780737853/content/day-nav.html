@@ -1,0 +1,147 @@
+<h2>How do you navigate between days?</h2>
+<p class="subtitle">All three show the same left panel. Pick the day-navigation style that feels right.</p>
+
+<div class="cards">
+
+  <!-- Option A: Horizontal day tabs -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:10px;font-size:11px;">
+        <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Left panel</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;">
+          <!-- Trip header -->
+          <div style="background:#1e293b;color:white;padding:6px 10px;font-size:11px;font-weight:600;">🗺 Seoul Trip · Jun 10–14</div>
+          <!-- Day tabs -->
+          <div style="display:flex;border-bottom:1px solid #e2e8f0;background:#f8fafc;overflow:hidden;">
+            <div style="padding:5px 8px;background:white;border-right:1px solid #e2e8f0;border-bottom:2px solid #6366f1;color:#4338ca;font-weight:600;font-size:10px;">Day 1</div>
+            <div style="padding:5px 8px;border-right:1px solid #e2e8f0;color:#94a3b8;font-size:10px;">Day 2</div>
+            <div style="padding:5px 8px;border-right:1px solid #e2e8f0;color:#94a3b8;font-size:10px;">Day 3</div>
+            <div style="padding:5px 8px;border-right:1px solid #e2e8f0;color:#94a3b8;font-size:10px;">Day 4</div>
+            <div style="padding:5px 8px;color:#94a3b8;font-size:10px;">Day 5</div>
+          </div>
+          <!-- Plan -->
+          <div style="padding:8px;background:white;">
+            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px;">📋 Plan · Jun 10</div>
+            <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+              <div style="width:16px;height:16px;background:#6366f1;border-radius:50%;color:white;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;">1</div>
+              <div style="background:#f1f5f9;border-radius:3px;padding:3px 6px;flex:1;font-size:10px;">Gyeongbokgung <span style="color:#94a3b8;">~2h</span></div>
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;margin-bottom:6px;">
+              <div style="width:16px;height:16px;background:#6366f1;border-radius:50%;color:white;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;">2</div>
+              <div style="background:#f1f5f9;border-radius:3px;padding:3px 6px;flex:1;font-size:10px;">Bukchon Hanok <span style="color:#94a3b8;">~1h</span></div>
+            </div>
+            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px;">🗂 Maybe</div>
+            <div style="display:flex;gap:3px;flex-wrap:wrap;">
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 7px;font-size:10px;color:#15803d;">Namsan</span>
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 7px;font-size:10px;color:#15803d;">Myeongdong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Day tabs</h3>
+      <p>Horizontal tabs across the top of the panel. Simple, familiar (like Google Trips). Gets crowded beyond 6–7 days.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Left sidebar list of dates -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:10px;font-size:11px;">
+        <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Left panel (split into date list + day detail)</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;display:flex;">
+          <!-- Date list -->
+          <div style="width:64px;background:#1e293b;padding:6px 0;flex-shrink:0;">
+            <div style="padding:4px 6px;background:#6366f1;border-radius:3px;margin:0 4px 2px;text-align:center;">
+              <div style="color:white;font-size:9px;font-weight:700;">JUN</div>
+              <div style="color:white;font-size:13px;font-weight:700;line-height:1;">10</div>
+              <div style="color:#a5b4fc;font-size:8px;">Mon</div>
+            </div>
+            <div style="padding:4px 6px;margin:0 4px 2px;text-align:center;cursor:pointer;">
+              <div style="color:#94a3b8;font-size:9px;">JUN</div>
+              <div style="color:#e2e8f0;font-size:13px;font-weight:700;line-height:1;">11</div>
+              <div style="color:#64748b;font-size:8px;">Tue</div>
+            </div>
+            <div style="padding:4px 6px;margin:0 4px 2px;text-align:center;cursor:pointer;">
+              <div style="color:#94a3b8;font-size:9px;">JUN</div>
+              <div style="color:#e2e8f0;font-size:13px;font-weight:700;line-height:1;">12</div>
+              <div style="color:#64748b;font-size:8px;">Wed</div>
+            </div>
+            <div style="padding:4px 6px;margin:0 4px;text-align:center;cursor:pointer;">
+              <div style="color:#94a3b8;font-size:9px;">JUN</div>
+              <div style="color:#e2e8f0;font-size:13px;font-weight:700;line-height:1;">13</div>
+              <div style="color:#64748b;font-size:8px;">Thu</div>
+            </div>
+          </div>
+          <!-- Day detail -->
+          <div style="flex:1;padding:6px;background:white;">
+            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px;">📋 Jun 10 · Plan</div>
+            <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+              <div style="width:14px;height:14px;background:#6366f1;border-radius:50%;color:white;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+              <div style="background:#f1f5f9;border-radius:3px;padding:3px 5px;flex:1;font-size:10px;">Gyeongbokgung <span style="color:#94a3b8;">~2h</span></div>
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;margin-bottom:5px;">
+              <div style="width:14px;height:14px;background:#6366f1;border-radius:50%;color:white;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+              <div style="background:#f1f5f9;border-radius:3px;padding:3px 5px;flex:1;font-size:10px;">Bukchon <span style="color:#94a3b8;">~1h</span></div>
+            </div>
+            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:3px;">🗂 Maybe</div>
+            <div style="display:flex;gap:3px;flex-wrap:wrap;">
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 6px;font-size:9px;color:#15803d;">Namsan</span>
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 6px;font-size:9px;color:#15803d;">Myeongdong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Date sidebar</h3>
+      <p>A narrow column of dates on the left side of the panel. Scales well to long trips, always shows the full timeline at a glance. Similar to calendar apps.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Mini calendar + day detail -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:10px;font-size:11px;">
+        <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Left panel (mini calendar on top, day detail below)</div>
+        <div style="border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;">
+          <!-- Mini calendar -->
+          <div style="background:#1e293b;padding:6px 8px;">
+            <div style="color:#e2e8f0;font-size:10px;font-weight:600;margin-bottom:4px;text-align:center;">June 2025</div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;text-align:center;">
+              <div style="color:#64748b;font-size:8px;">M</div><div style="color:#64748b;font-size:8px;">T</div><div style="color:#64748b;font-size:8px;">W</div><div style="color:#64748b;font-size:8px;">T</div><div style="color:#64748b;font-size:8px;">F</div><div style="color:#64748b;font-size:8px;">S</div><div style="color:#64748b;font-size:8px;">S</div>
+              <div style="color:#475569;font-size:9px;">2</div><div style="color:#475569;font-size:9px;">3</div><div style="color:#475569;font-size:9px;">4</div><div style="color:#475569;font-size:9px;">5</div><div style="color:#475569;font-size:9px;">6</div><div style="color:#475569;font-size:9px;">7</div><div style="color:#475569;font-size:9px;">8</div>
+              <div style="color:#475569;font-size:9px;">9</div>
+              <div style="background:#6366f1;color:white;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;display:flex;align-items:center;justify-content:center;margin:auto;">10</div>
+              <div style="background:#a5b4fc;color:#3730a3;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;display:flex;align-items:center;justify-content:center;margin:auto;">11</div>
+              <div style="background:#a5b4fc;color:#3730a3;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;display:flex;align-items:center;justify-content:center;margin:auto;">12</div>
+              <div style="background:#a5b4fc;color:#3730a3;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;display:flex;align-items:center;justify-content:center;margin:auto;">13</div>
+              <div style="background:#a5b4fc;color:#3730a3;border-radius:50%;font-size:9px;font-weight:700;width:16px;height:16px;display:flex;align-items:center;justify-content:center;margin:auto;">14</div>
+              <div style="color:#475569;font-size:9px;">15</div>
+            </div>
+          </div>
+          <!-- Day detail -->
+          <div style="padding:6px 8px;background:white;">
+            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:4px;">📋 Jun 10 (Mon) · Plan</div>
+            <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+              <div style="width:14px;height:14px;background:#6366f1;border-radius:50%;color:white;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+              <div style="background:#f1f5f9;border-radius:3px;padding:3px 6px;flex:1;font-size:10px;">Gyeongbokgung <span style="color:#94a3b8;">~2h</span></div>
+            </div>
+            <div style="border-top:1px dashed #e2e8f0;margin:4px 0;"></div>
+            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:3px;">🗂 Maybe</div>
+            <div style="display:flex;gap:3px;">
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 6px;font-size:9px;color:#15803d;">Namsan</span>
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 6px;font-size:9px;color:#15803d;">Myeongdong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Mini calendar</h3>
+      <p>A compact calendar at the top highlights trip dates; click any date to see that day's plan below. Great for orientation but takes up vertical space.</p>
+    </div>
+  </div>
+
+</div>

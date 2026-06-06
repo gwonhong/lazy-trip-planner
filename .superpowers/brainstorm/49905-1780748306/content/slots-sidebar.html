@@ -1,0 +1,130 @@
+<h2>Date sidebar with custom slots</h2>
+<p class="subtitle">Here's how the left panel would look with free-form titled slots, grouped by date and reorderable within a day. Does this match your vision?</p>
+
+<div class="mockup">
+  <div class="mockup-header">Left panel — date sidebar + slot detail</div>
+  <div class="mockup-body" style="padding:0;">
+    <div style="display:flex;height:340px;font-size:11px;">
+
+      <!-- Date sidebar -->
+      <div style="width:160px;background:#1e293b;padding:6px 0;flex-shrink:0;overflow-y:auto;">
+
+        <!-- 6/10 group -->
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:4px;">Jun 10 · Mon</div>
+
+        <!-- Slot 1 (selected) -->
+        <div style="margin:2px 6px;background:#6366f1;border-radius:5px;padding:5px 7px;cursor:pointer;display:flex;align-items:center;gap:5px;">
+          <span style="color:#a5b4fc;font-size:12px;cursor:grab;">⠿</span>
+          <div>
+            <div style="color:#c7d2fe;font-size:9px;">6/10 Mon</div>
+            <div style="color:white;font-size:10px;font-weight:600;">Seoul city tour</div>
+          </div>
+        </div>
+
+        <!-- Slot 2 -->
+        <div style="margin:2px 6px;border-radius:5px;padding:5px 7px;cursor:pointer;display:flex;align-items:center;gap:5px;">
+          <span style="color:#334155;font-size:12px;cursor:grab;">⠿</span>
+          <div>
+            <div style="color:#475569;font-size:9px;">6/10 Mon</div>
+            <div style="color:#94a3b8;font-size:10px;">Seoul club tour</div>
+          </div>
+        </div>
+
+        <!-- 6/11 group -->
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;border-top:1px solid #1e3a5f;padding-top:6px;">Jun 11 · Tue</div>
+
+        <!-- Slot 3 -->
+        <div style="margin:2px 6px;border-radius:5px;padding:5px 7px;cursor:pointer;display:flex;align-items:center;gap:5px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div>
+            <div style="color:#475569;font-size:9px;">6/11 Tue</div>
+            <div style="color:#94a3b8;font-size:10px;">Busan all day tour</div>
+          </div>
+        </div>
+
+        <!-- 6/12 group -->
+        <div style="padding:2px 8px;font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:6px;border-top:1px solid #1e3a5f;padding-top:6px;">Jun 12 · Wed</div>
+
+        <div style="margin:2px 6px;border-radius:5px;padding:5px 7px;cursor:pointer;display:flex;align-items:center;gap:5px;">
+          <span style="color:#334155;font-size:12px;">⠿</span>
+          <div>
+            <div style="color:#475569;font-size:9px;">6/12 Wed</div>
+            <div style="color:#94a3b8;font-size:10px;">Hangang picnic</div>
+          </div>
+        </div>
+
+        <!-- Add slot button -->
+        <div style="margin:8px 6px 4px;border:1px dashed #334155;border-radius:5px;padding:5px 7px;cursor:pointer;text-align:center;color:#475569;font-size:10px;">
+          + new slot
+        </div>
+
+      </div>
+
+      <!-- Detail panel -->
+      <div style="flex:1;background:white;display:flex;flex-direction:column;overflow:hidden;">
+        <!-- Slot header -->
+        <div style="padding:8px 10px;border-bottom:1px solid #f1f5f9;background:#fafafa;">
+          <div style="font-size:11px;font-weight:700;color:#1e293b;">Seoul city tour</div>
+          <div style="font-size:10px;color:#94a3b8;">6/10 Mon</div>
+        </div>
+        <!-- Plan -->
+        <div style="padding:8px 10px;flex:1;overflow-y:auto;">
+          <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:5px;">📋 Ordered plan</div>
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:3px;">
+            <span style="color:#cbd5e1;font-size:12px;cursor:grab;">⠿</span>
+            <div style="width:16px;height:16px;background:#6366f1;border-radius:50%;color:white;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+            <div style="background:#f1f5f9;border-radius:4px;padding:4px 8px;flex:1;font-size:10px;">Gyeongbokgung Palace <span style="color:#94a3b8;">~2h</span></div>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:3px;">
+            <span style="color:#cbd5e1;font-size:12px;cursor:grab;">⠿</span>
+            <div style="width:16px;height:16px;background:#6366f1;border-radius:50%;color:white;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+            <div style="background:#f1f5f9;border-radius:4px;padding:4px 8px;flex:1;font-size:10px;">Bukchon Hanok Village <span style="color:#94a3b8;">~1h</span></div>
+          </div>
+          <div style="display:flex;gap:5px;align-items:center;margin-bottom:10px;">
+            <span style="color:#cbd5e1;font-size:12px;cursor:grab;">⠿</span>
+            <div style="width:16px;height:16px;background:#e2e8f0;border-radius:50%;color:#94a3b8;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">+</div>
+            <div style="border:1px dashed #e2e8f0;border-radius:4px;padding:4px 8px;flex:1;font-size:10px;color:#94a3b8;">add place…</div>
+          </div>
+
+          <div style="border-top:1px dashed #e2e8f0;margin-bottom:8px;"></div>
+          <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:5px;">🗂 Maybe / if spare time</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            <span style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:3px 9px;font-size:10px;color:#15803d;">Insadong</span>
+            <span style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:3px 9px;font-size:10px;color:#15803d;">Namsan Tower</span>
+            <span style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:3px 9px;font-size:10px;color:#15803d;">Myeongdong</span>
+            <span style="background:#f8fafc;border:1px dashed #e2e8f0;border-radius:12px;padding:3px 9px;font-size:10px;color:#94a3b8;">+ add</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;padding:12px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:12px;color:#92400e;">
+  <strong>Key behaviors shown:</strong>
+  <ul style="margin:6px 0 0 16px;padding:0;line-height:1.8;">
+    <li>Sidebar entries show <strong>date header</strong> (Jun 10 · Mon) as a group label, then slots under it with ⠿ drag handle</li>
+    <li>Multiple slots on the same date — drag-reorderable within the group</li>
+    <li>Slots across different dates are sorted by date automatically</li>
+    <li><strong>+ new slot</strong> button at the bottom — opens a small form to pick date + title</li>
+    <li>Each slot has its own ordered plan + maybe pool</li>
+  </ul>
+</div>
+
+<div class="options" style="margin-top:16px;">
+  <div class="option" data-choice="yes" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Yes, this is the idea</h3>
+      <p>Move on to the next question</p>
+    </div>
+  </div>
+  <div class="option" data-choice="tweak" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Close, but needs a tweak</h3>
+      <p>Tell me what to adjust in the terminal</p>
+    </div>
+  </div>
+</div>

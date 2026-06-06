@@ -1,0 +1,92 @@
+<h2>What does a "flexible timetable" look like?</h2>
+<p class="subtitle">How should the daily plan be structured? Pick the one that feels closest to your vision.</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:12px;font-size:13px;">
+        <div style="background:#e8f4fd;border-left:3px solid #3b82f6;padding:8px 10px;margin-bottom:6px;border-radius:4px;">
+          <div style="font-weight:600;color:#1e40af;font-size:11px;text-transform:uppercase;margin-bottom:4px;">☀️ Morning</div>
+          <div style="background:white;border-radius:3px;padding:5px 8px;margin-bottom:4px;font-size:12px;">📍 Gyeongbokgung Palace <span style="color:#9ca3af;font-size:11px;">~2h</span></div>
+          <div style="background:white;border-radius:3px;padding:5px 8px;font-size:12px;">📍 Bukchon Hanok Village <span style="color:#9ca3af;font-size:11px;">~1h</span></div>
+        </div>
+        <div style="background:#f0fdf4;border-left:3px solid #22c55e;padding:8px 10px;margin-bottom:6px;border-radius:4px;">
+          <div style="font-weight:600;color:#15803d;font-size:11px;text-transform:uppercase;margin-bottom:4px;">🌤 Afternoon</div>
+          <div style="background:white;border-radius:3px;padding:5px 8px;margin-bottom:4px;font-size:12px;">📍 Insadong <span style="color:#9ca3af;font-size:11px;">~1.5h</span></div>
+          <div style="background:white;border-radius:3px;padding:5px 8px;font-size:12px;border:1px dashed #d1d5db;color:#6b7280;">+ add place</div>
+        </div>
+        <div style="background:#fefce8;border-left:3px solid #eab308;padding:8px 10px;border-radius:4px;">
+          <div style="font-weight:600;color:#854d0e;font-size:11px;text-transform:uppercase;margin-bottom:4px;">🌙 Evening</div>
+          <div style="background:white;border-radius:3px;padding:5px 8px;font-size:12px;border:1px dashed #d1d5db;color:#6b7280;">+ add place</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Time Buckets</h3>
+      <p>Morning / Afternoon / Evening sections. Places go in a bucket but no exact times. Order within a bucket is flexible.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:12px;font-size:13px;">
+        <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+          <div style="width:28px;height:28px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0;">1</div>
+          <div style="background:#f1f5f9;border-radius:4px;padding:6px 10px;flex:1;">
+            <div style="font-size:12px;font-weight:500;">📍 Gyeongbokgung Palace</div>
+            <div style="font-size:11px;color:#94a3b8;">Estimated: 1.5 – 2.5 hrs</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+          <div style="width:28px;height:28px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0;">2</div>
+          <div style="background:#f1f5f9;border-radius:4px;padding:6px 10px;flex:1;">
+            <div style="font-size:12px;font-weight:500;">📍 Bukchon Hanok Village</div>
+            <div style="font-size:11px;color:#94a3b8;">Estimated: 1 – 2 hrs</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+          <div style="width:28px;height:28px;background:#6366f1;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0;">3</div>
+          <div style="background:#f1f5f9;border-radius:4px;padding:6px 10px;flex:1;">
+            <div style="font-size:12px;font-weight:500;">📍 Insadong</div>
+            <div style="font-size:11px;color:#94a3b8;">Estimated: 1 – 2 hrs</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <div style="width:28px;height:28px;background:#e2e8f0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:11px;font-weight:700;flex-shrink:0;">+</div>
+          <div style="background:#f8fafc;border-radius:4px;padding:6px 10px;flex:1;border:1px dashed #cbd5e1;">
+            <div style="font-size:12px;color:#94a3b8;">add next stop…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Ordered List</h3>
+      <p>Places in rough visit order, each with a time range estimate. No fixed clock times — just "visit these roughly in this order."</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:12px;font-size:13px;">
+        <div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Day 1 · Plan</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
+          <div style="background:#dbeafe;border-radius:20px;padding:4px 10px;font-size:12px;color:#1d4ed8;">📍 Gyeongbokgung</div>
+          <div style="background:#dbeafe;border-radius:20px;padding:4px 10px;font-size:12px;color:#1d4ed8;">📍 Insadong</div>
+          <div style="background:#dbeafe;border-radius:20px;padding:4px 10px;font-size:12px;color:#1d4ed8;">📍 Hanok Village</div>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;margin-bottom:6px;">Maybe / Backup</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <div style="background:#f3f4f6;border-radius:20px;padding:4px 10px;font-size:12px;color:#6b7280;">📍 Namsan Tower</div>
+          <div style="background:#f3f4f6;border-radius:20px;padding:4px 10px;font-size:12px;color:#6b7280;">📍 Myeongdong</div>
+          <div style="background:#f3f4f6;border-radius:20px;padding:4px 10px;font-size:12px;color:#6b7280;">📍 Cheonggyecheon</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Plan + Maybe Pool</h3>
+      <p>Two sections per day: confirmed places and a "maybe" list. No ordering, no times — just "I'll figure it out on the day."</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,123 @@
+<h2>How does the Day / Night split appear?</h2>
+<p class="subtitle">Each date has a Day and Night section. Where does that split live?</p>
+
+<div class="cards">
+
+  <!-- Option A: Sub-rows in the sidebar -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:10px;font-size:11px;">
+        <div style="border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;display:flex;height:190px;">
+          <!-- Date sidebar -->
+          <div style="width:72px;background:#1e293b;padding:5px 0;flex-shrink:0;overflow-y:auto;">
+            <!-- Jun 10 - Day (selected) -->
+            <div style="padding:3px 5px;background:#6366f1;border-radius:3px;margin:0 3px 1px;text-align:center;">
+              <div style="color:#a5b4fc;font-size:8px;">6/10 Mon</div>
+              <div style="color:white;font-size:9px;font-weight:600;">☀️ Day</div>
+            </div>
+            <!-- Jun 10 - Night -->
+            <div style="padding:3px 5px;margin:0 3px 4px;text-align:center;border-radius:3px;">
+              <div style="color:#64748b;font-size:8px;">6/10 Mon</div>
+              <div style="color:#94a3b8;font-size:9px;">🌙 Night</div>
+            </div>
+            <!-- Divider -->
+            <div style="border-top:1px solid #334155;margin:0 5px 4px;"></div>
+            <!-- Jun 11 - Day -->
+            <div style="padding:3px 5px;margin:0 3px 1px;text-align:center;border-radius:3px;">
+              <div style="color:#64748b;font-size:8px;">6/11 Tue</div>
+              <div style="color:#94a3b8;font-size:9px;">☀️ Day</div>
+            </div>
+            <!-- Jun 11 - Night -->
+            <div style="padding:3px 5px;margin:0 3px 4px;text-align:center;border-radius:3px;">
+              <div style="color:#64748b;font-size:8px;">6/11 Tue</div>
+              <div style="color:#94a3b8;font-size:9px;">🌙 Night</div>
+            </div>
+            <div style="border-top:1px solid #334155;margin:0 5px 4px;"></div>
+            <!-- Jun 12 - Day -->
+            <div style="padding:3px 5px;margin:0 3px 1px;text-align:center;border-radius:3px;">
+              <div style="color:#64748b;font-size:8px;">6/12 Wed</div>
+              <div style="color:#94a3b8;font-size:9px;">☀️ Day</div>
+            </div>
+          </div>
+          <!-- Detail panel -->
+          <div style="flex:1;padding:8px;background:white;overflow-y:auto;">
+            <div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:6px;">☀️ 6/10 Mon — Day</div>
+            <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+              <div style="width:14px;height:14px;background:#6366f1;border-radius:50%;color:white;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+              <div style="background:#f1f5f9;border-radius:3px;padding:3px 6px;flex:1;font-size:10px;">Gyeongbokgung <span style="color:#94a3b8;">~2h</span></div>
+            </div>
+            <div style="display:flex;gap:4px;align-items:center;margin-bottom:6px;">
+              <div style="width:14px;height:14px;background:#6366f1;border-radius:50%;color:white;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+              <div style="background:#f1f5f9;border-radius:3px;padding:3px 6px;flex:1;font-size:10px;">Bukchon <span style="color:#94a3b8;">~1h</span></div>
+            </div>
+            <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:3px;">🗂 Maybe</div>
+            <div style="display:flex;gap:3px;flex-wrap:wrap;">
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 6px;font-size:9px;color:#15803d;">Namsan</span>
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 6px;font-size:9px;color:#15803d;">Myeongdong</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Day & Night as separate sidebar rows</h3>
+      <p>Each date appears twice in the sidebar — ☀️ Day and 🌙 Night as distinct entries, grouped by a divider. Click either to see that slot's plan.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Date in sidebar, Day/Night tabs in detail panel -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="padding:10px;font-size:11px;">
+        <div style="border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;display:flex;height:190px;">
+          <!-- Date sidebar -->
+          <div style="width:72px;background:#1e293b;padding:5px 0;flex-shrink:0;">
+            <div style="padding:4px 5px;background:#6366f1;border-radius:3px;margin:0 3px 3px;text-align:center;">
+              <div style="color:#a5b4fc;font-size:8px;">6/10 Mon</div>
+              <div style="color:white;font-size:9px;font-weight:600;">Day 1</div>
+            </div>
+            <div style="padding:4px 5px;margin:0 3px 3px;text-align:center;border-radius:3px;">
+              <div style="color:#64748b;font-size:8px;">6/11 Tue</div>
+              <div style="color:#94a3b8;font-size:9px;">Day 2</div>
+            </div>
+            <div style="padding:4px 5px;margin:0 3px 3px;text-align:center;border-radius:3px;">
+              <div style="color:#64748b;font-size:8px;">6/12 Wed</div>
+              <div style="color:#94a3b8;font-size:9px;">Day 3</div>
+            </div>
+            <div style="padding:4px 5px;margin:0 3px;text-align:center;border-radius:3px;">
+              <div style="color:#64748b;font-size:8px;">6/13 Thu</div>
+              <div style="color:#94a3b8;font-size:9px;">Day 4</div>
+            </div>
+          </div>
+          <!-- Detail panel with Day/Night tabs -->
+          <div style="flex:1;background:white;display:flex;flex-direction:column;">
+            <!-- Day/Night sub-tabs -->
+            <div style="display:flex;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
+              <div style="padding:5px 10px;border-bottom:2px solid #6366f1;color:#4338ca;font-weight:600;font-size:10px;cursor:pointer;">☀️ Day</div>
+              <div style="padding:5px 10px;color:#94a3b8;font-size:10px;cursor:pointer;">🌙 Night</div>
+            </div>
+            <!-- Content -->
+            <div style="padding:8px;flex:1;overflow-y:auto;">
+              <div style="font-size:10px;font-weight:700;color:#4338ca;margin-bottom:6px;">6/10 Mon · Daytime Plan</div>
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:3px;">
+                <div style="width:14px;height:14px;background:#6366f1;border-radius:50%;color:white;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+                <div style="background:#f1f5f9;border-radius:3px;padding:3px 6px;flex:1;font-size:10px;">Gyeongbokgung <span style="color:#94a3b8;">~2h</span></div>
+              </div>
+              <div style="display:flex;gap:4px;align-items:center;margin-bottom:6px;">
+                <div style="width:14px;height:14px;background:#6366f1;border-radius:50%;color:white;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+                <div style="background:#f1f5f9;border-radius:3px;padding:3px 6px;flex:1;font-size:10px;">Bukchon <span style="color:#94a3b8;">~1h</span></div>
+              </div>
+              <div style="font-size:10px;font-weight:600;color:#6b7280;margin-bottom:3px;">🗂 Maybe</div>
+              <span style="background:#f0fdf4;border-radius:10px;padding:2px 6px;font-size:9px;color:#15803d;">Namsan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Date in sidebar, Day/Night tabs in detail</h3>
+      <p>Sidebar shows one entry per date. Selecting a date reveals ☀️ Day / 🌙 Night tabs inside the detail panel. Cleaner sidebar, but one extra click to switch slots.</p>
+    </div>
+  </div>
+
+</div>

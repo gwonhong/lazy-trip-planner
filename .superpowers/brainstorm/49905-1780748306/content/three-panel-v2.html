@@ -1,0 +1,152 @@
+<h2>Collapse button on the divider edge</h2>
+<p class="subtitle">Toggle sits centered on the vertical border between Map and History — like a sidebar handle.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Full desktop layout</div>
+  <div class="mockup-body" style="padding:0;position:relative;">
+    <div style="display:flex;height:400px;font-size:11px;position:relative;">
+
+      <!-- LEFT PANEL -->
+      <div style="width:230px;flex-shrink:0;display:flex;border-right:1px solid #1e3a5f;">
+        <div style="width:110px;background:#1e293b;padding:5px 0;flex-shrink:0;border-right:1px solid #334155;">
+          <div style="padding:2px 7px;font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;">Jun 10 · Mon</div>
+          <div style="margin:2px 4px;background:#6366f1;border-radius:4px;padding:5px 6px;display:flex;align-items:center;gap:4px;">
+            <span style="color:#a5b4fc;font-size:10px;">⠿</span>
+            <div>
+              <div style="color:white;font-size:10px;font-weight:600;">City tour</div>
+              <div style="color:#a5b4fc;font-size:8px;">09:00–13:00</div>
+            </div>
+          </div>
+          <div style="margin:2px 4px;border-radius:4px;padding:5px 6px;display:flex;align-items:center;gap:4px;">
+            <span style="color:#334155;font-size:10px;">⠿</span>
+            <div style="color:#94a3b8;font-size:10px;">Club tour</div>
+          </div>
+          <div style="padding:2px 7px;font-size:8px;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-top:4px;border-top:1px solid #334155;padding-top:4px;">Jun 11 · Tue</div>
+          <div style="margin:2px 4px;border-radius:4px;padding:5px 6px;display:flex;align-items:center;gap:4px;">
+            <span style="color:#334155;font-size:10px;">⠿</span>
+            <div style="color:#94a3b8;font-size:10px;">Busan all day</div>
+          </div>
+          <div style="margin:6px 4px 3px;border:1px dashed #334155;border-radius:4px;padding:4px 6px;text-align:center;color:#475569;font-size:9px;">+ new slot</div>
+        </div>
+        <div style="flex:1;background:#0f172a;display:flex;flex-direction:column;overflow:hidden;">
+          <div style="padding:6px 8px;border-bottom:1px solid #1e3a5f;">
+            <div style="font-size:10px;font-weight:700;color:#e2e8f0;">Seoul city tour</div>
+            <div style="font-size:8px;color:#475569;">6/10 Mon · 09:00–13:00</div>
+          </div>
+          <div style="padding:6px 8px;flex:1;overflow-y:auto;">
+            <div style="font-size:9px;font-weight:600;color:#64748b;margin-bottom:4px;">📋 Plan</div>
+            <div style="display:flex;gap:3px;align-items:center;margin-bottom:2px;">
+              <div style="width:12px;height:12px;background:#6366f1;border-radius:50%;color:white;font-size:6px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div>
+              <div style="background:#1e293b;border-radius:3px;padding:2px 5px;flex:1;font-size:9px;color:#e2e8f0;">Gyeongbokgung <span style="color:#475569;">~2h</span></div>
+            </div>
+            <div style="display:flex;gap:3px;align-items:center;margin-bottom:6px;">
+              <div style="width:12px;height:12px;background:#6366f1;border-radius:50%;color:white;font-size:6px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div>
+              <div style="background:#1e293b;border-radius:3px;padding:2px 5px;flex:1;font-size:9px;color:#e2e8f0;">Bukchon <span style="color:#475569;">~1h</span></div>
+            </div>
+            <div style="font-size:9px;font-weight:600;color:#64748b;margin-bottom:3px;">🗂 Maybe</div>
+            <div style="display:flex;gap:3px;flex-wrap:wrap;">
+              <span style="background:#052e16;border:1px solid #166534;border-radius:10px;padding:1px 6px;font-size:8px;color:#4ade80;">Insadong</span>
+              <span style="background:#052e16;border:1px solid #166534;border-radius:10px;padding:1px 6px;font-size:8px;color:#4ade80;">Namsan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MIDDLE PANEL: Map -->
+      <div style="flex:1;background:#0d2137;display:flex;flex-direction:column;position:relative;">
+        <div style="flex:1;background:linear-gradient(135deg,#0d2137 0%,#0a3055 50%,#0d2137 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;position:relative;">
+          <div style="font-size:24px;opacity:.4;">🗺</div>
+          <div style="font-size:10px;color:#334155;font-weight:600;">Google Map</div>
+          <div style="position:absolute;top:35%;left:40%;width:10px;height:10px;background:#6366f1;border-radius:50%;border:2px solid white;"></div>
+          <div style="position:absolute;top:42%;left:52%;width:10px;height:10px;background:#6366f1;border-radius:50%;border:2px solid white;"></div>
+          <div style="position:absolute;top:55%;left:44%;width:8px;height:8px;background:#22c55e;border-radius:50%;border:2px solid white;opacity:.7;"></div>
+        </div>
+        <div style="position:absolute;top:8px;right:8px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:4px 10px;font-size:9px;color:#94a3b8;cursor:pointer;display:flex;align-items:center;gap:4px;">
+          💾 <span>Save snapshot</span>
+        </div>
+
+        <!-- Collapse toggle — centered on right edge -->
+        <div style="position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:10;
+                    width:20px;height:36px;background:#334155;border:1px solid #475569;
+                    border-radius:4px;display:flex;align-items:center;justify-content:center;
+                    cursor:pointer;color:#94a3b8;font-size:10px;font-weight:700;">
+          ⟩
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: History -->
+      <div style="width:195px;flex-shrink:0;background:#0f172a;display:flex;flex-direction:column;border-left:1px solid #1e3a5f;">
+        <div style="padding:6px 10px;border-bottom:1px solid #1e3a5f;">
+          <span style="font-size:10px;font-weight:600;color:#94a3b8;">🕐 History</span>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:5px;">
+
+          <div style="background:#1e293b;border:1px solid #334155;border-radius:6px;padding:6px 8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <span style="font-size:8px;color:#64748b;">14:32</span>
+              <span style="font-size:8px;background:#6366f1;color:white;padding:1px 5px;border-radius:8px;">latest</span>
+            </div>
+            <div style="font-size:9px;color:#e2e8f0;margin-bottom:2px;">"add Insadong after Bukchon"</div>
+            <div style="font-size:8px;color:#475569;">Added stop #3</div>
+          </div>
+
+          <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:6px;padding:6px 8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <span style="font-size:8px;color:#64748b;">14:10</span>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <span style="font-size:8px;color:#64748b;background:#1e293b;padding:1px 5px;border-radius:8px;">💾 manual</span>
+                <button style="font-size:8px;background:transparent;border:1px solid #334155;color:#94a3b8;padding:1px 5px;border-radius:8px;cursor:pointer;">↩</button>
+              </div>
+            </div>
+            <div style="font-size:9px;color:#94a3b8;">Saved before editing</div>
+          </div>
+
+          <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:6px;padding:6px 8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <span style="font-size:8px;color:#64748b;">13:55</span>
+              <button style="font-size:8px;background:transparent;border:1px solid #334155;color:#94a3b8;padding:1px 5px;border-radius:8px;cursor:pointer;">↩</button>
+            </div>
+            <div style="font-size:9px;color:#94a3b8;">"swap order of stops"</div>
+            <div style="font-size:8px;color:#475569;">Reordered #1 ↔ #2</div>
+          </div>
+
+          <div style="background:#0f172a;border:1px solid #1e3a5f;border-radius:6px;padding:6px 8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+              <span style="font-size:8px;color:#64748b;">11:20</span>
+              <button style="font-size:8px;background:transparent;border:1px solid #334155;color:#94a3b8;padding:1px 5px;border-radius:8px;cursor:pointer;">↩</button>
+            </div>
+            <div style="font-size:9px;color:#94a3b8;">"create Seoul city tour"</div>
+            <div style="font-size:8px;color:#475569;">Initial plan created</div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Floating command bar -->
+    <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:460px;background:#1e293b;border:1px solid #4f46e5;border-radius:24px;padding:8px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 24px #6366f144;">
+      <span style="font-size:12px;">✨</span>
+      <div style="flex:1;font-size:11px;color:#475569;">Ask AI to edit your plan… (⌘K)</div>
+      <div style="font-size:9px;color:#334155;background:#0f172a;border-radius:10px;padding:2px 7px;">⌘K</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="options" style="margin-top:16px;">
+  <div class="option" data-choice="yes" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Yes, this is it</h3>
+      <p>The ⟩ handle sits centered on the map/history divider</p>
+    </div>
+  </div>
+  <div class="option" data-choice="tweak" onclick="toggleSelect(this)">
+    <div class="letter">~</div>
+    <div class="content">
+      <h3>Needs a tweak</h3>
+      <p>Tell me in the terminal</p>
+    </div>
+  </div>
+</div>
