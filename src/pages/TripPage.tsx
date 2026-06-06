@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useTripStore } from '../stores/tripStore'
 import SettingsModal from '../components/shared/SettingsModal'
 import CollapseHandle from '../components/trip/CollapseHandle'
+import DateSidebar from '../components/trip/DateSidebar'
 
 export default function TripPage() {
   const { id } = useParams<{ id: string }>()
@@ -36,11 +37,9 @@ export default function TripPage() {
 
       {/* Three-panel body */}
       <div className="flex flex-1 overflow-hidden relative">
-        {/* Left panel: date sidebar + slot detail */}
+        {/* Left panel: date sidebar */}
         <div className="w-72 flex-shrink-0 border-r border-slate-800 flex flex-col overflow-hidden">
-          <div className="flex-1 flex items-center justify-center text-slate-600 text-sm">
-            Date sidebar — Task 8
-          </div>
+          <DateSidebar tripId={trip.id} />
         </div>
 
         {/* Middle panel: map */}
