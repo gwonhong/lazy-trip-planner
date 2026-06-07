@@ -169,50 +169,38 @@ export default function CommandBar({ tripId, onCandidatesChange, focusRef }: Pro
         { role: 'user', content: `Current ${scope === 'slot' ? 'slot' : 'all slots'}:\n${contextJson}\n\nInstruction: ${userQuery}` },
       ]
 
-      // Agentic loop: keep running until LLM stops calling tools
-      let iterations = 0
-      while (iterations < 5) {
-        iterations++
-        const response = await client.complete(messages, [searchPlacesTool])
-
-        if (response.toolCalls?.length) {
-          for (const tc of response.toolCalls) {
-            if (tc.name === 'searchPlaces') {
-              const { query: searchQuery, nearLocation } = tc.arguments as { query: string; nearLocation?: { lat: number; lng: number } }
-              const results = await textSearchPlaces(searchQuery, mapsKey, nearLocation)
-              messages.push({ role: 'assistant', content: JSON.stringify(response) })
-              messages.push({
-                role: 'tool',
-                content: JSON.stringify(results),
-                toolCallId: tc.id,
-              })
-            }
-          }
-          continue
+      // Each client handles its own tool-call loop with the correct provider message format
+      const response = await client.complete(messages, [searchPlacesTool], async (name, args) => {
+        if (name === 'searchPlaces') {
+          const { query: searchQuery, nearLocation } = args as { query: string; nearLocation?: { lat: number; lng: number } }
+          const results = await textSearchPlaces(searchQuery, mapsKey, nearLocation)
+          return JSON.stringify(results)
         }
+        return '[]'
+      })
 
-        // Final text response — parse JSON
-        const text = response.content ?? ''
-        const parsed = JSON.parse(text)
+      // Strip potential markdown fences before parsing
+      let text = (response.content ?? '').trim()
+      if (text.startsWith('```')) {
+        text = text.replace(/^```(?:json)?\s*/m, '').replace(/\s*```\s*$/m, '').trim()
+      }
+      const parsed = JSON.parse(text)
 
-        setCommentary(parsed.commentary ?? null)
+      setCommentary(parsed.commentary ?? null)
 
-        if (parsed.type === 'planUpdate') {
-          if (scope === 'slot' && parsed.updatedSlot && currentSlot) {
-            useTripStore.getState().updateSlot(currentSlot.id, parsed.updatedSlot)
-            useTripStore.getState().saveSnapshot(tripId, userQuery, false, parsed.commentary)
-          } else if (scope === 'trip' && parsed.updatedSlots) {
-            for (const updatedSlot of parsed.updatedSlots) {
-              useTripStore.getState().updateSlot(updatedSlot.id, updatedSlot)
-            }
-            useTripStore.getState().saveSnapshot(tripId, userQuery, false, parsed.commentary)
+      if (parsed.type === 'planUpdate') {
+        if (scope === 'slot' && parsed.updatedSlot && currentSlot) {
+          useTripStore.getState().updateSlot(currentSlot.id, parsed.updatedSlot)
+          useTripStore.getState().saveSnapshot(tripId, userQuery, false, parsed.commentary)
+        } else if (scope === 'trip' && parsed.updatedSlots) {
+          for (const updatedSlot of parsed.updatedSlots) {
+            useTripStore.getState().updateSlot(updatedSlot.id, updatedSlot)
           }
-        } else if (parsed.type === 'placePicker' && parsed.suggestedCandidates) {
-          setCandidates(parsed.suggestedCandidates)
-          onCandidatesChange(parsed.suggestedCandidates)
+          useTripStore.getState().saveSnapshot(tripId, userQuery, false, parsed.commentary)
         }
-
-        break
+      } else if (parsed.type === 'placePicker' && parsed.suggestedCandidates) {
+        setCandidates(parsed.suggestedCandidates)
+        onCandidatesChange(parsed.suggestedCandidates)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Try again.')
@@ -246,7 +234,22 @@ export default function CommandBar({ tripId, onCandidatesChange, focusRef }: Pro
             onChange={(e) => setQuery(e.target.value)}
             placeholder={mode === 'search' ? 'Search places… (⌘K)' : 'Ask AI to edit your plan… (⌘K)'}
             className="flex-1 bg-transparent text-slate-200 text-sm placeholder:text-slate-500 outline-none"
-            onKeyDown={(e) => e.key === 'Enter' && mode === 'plan' && handlePlanSubmit()}
+            onKeyDown={async (e) => {
+              if (e.key !== 'Enter') return
+              if (mode === 'plan') { handlePlanSubmit(); return }
+              // search mode: trigger a deliberate text search on Enter
+              if (!query.trim() || !googleMapsApiKey) return
+              setLoading(true)
+              try {
+                const results = await textSearchPlaces(query.trim(), googleMapsApiKey)
+                setCandidates(results)
+                onCandidatesChange(results)
+              } catch {
+                setError('Search failed. Check your Google Maps API key.')
+              } finally {
+                setLoading(false)
+              }
+            }}
           />
           {loading && <span className="text-slate-500 text-xs animate-pulse">…</span>}
           <ModeToggle mode={mode} onChange={(m) => { setMode(m); setQuery(''); setCandidates([]); onCandidatesChange([]) }} />

@@ -28,7 +28,11 @@ export interface LlmResponse {
 }
 
 export interface LlmClient {
-  complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse>
+  complete(
+    messages: LlmMessage[],
+    tools?: LlmTool[],
+    onToolCall?: (name: string, args: Record<string, unknown>) => Promise<string>
+  ): Promise<LlmResponse>
 }
 
 export function createLlmClient(provider: LlmProvider, apiKey: string, model: string): LlmClient {
