@@ -4,12 +4,11 @@ import MaybePool from './MaybePool'
 import type { Slot } from '../../types'
 
 interface Props {
-  tripId: string
   slot: Slot
   onFocusSearch: () => void
 }
 
-export default function SlotDetail({ tripId, slot, onFocusSearch }: Props) {
+export default function SlotDetail({ slot, onFocusSearch }: Props) {
   const updateSlot = useTripStore((s) => s.updateSlot)
 
   return (

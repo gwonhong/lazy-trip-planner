@@ -74,7 +74,6 @@ export default function TripPage() {
           <div className="flex-1 overflow-hidden">
             {activeSlot ? (
               <SlotDetail
-                tripId={trip.id}
                 slot={activeSlot}
                 onFocusSearch={() => focusSearchRef.current?.()}
               />

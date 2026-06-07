@@ -1,4 +1,4 @@
-import type { Place, Slot } from '../../types'
+import type { Slot } from '../../types'
 
 interface Props {
   slot: Slot

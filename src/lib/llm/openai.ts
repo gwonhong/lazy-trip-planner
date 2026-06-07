@@ -1,7 +1,8 @@
 import type { LlmClient, LlmMessage, LlmTool, LlmResponse } from './index'
 
 export class OpenAiClient implements LlmClient {
-  constructor(private apiKey: string) {}
+  private apiKey: string
+  constructor(apiKey: string) { this.apiKey = apiKey }
 
   async complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse> {
     const body: Record<string, unknown> = {

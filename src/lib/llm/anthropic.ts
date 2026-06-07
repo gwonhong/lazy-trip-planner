@@ -1,7 +1,8 @@
 import type { LlmClient, LlmMessage, LlmTool, LlmResponse } from './index'
 
 export class AnthropicClient implements LlmClient {
-  constructor(private apiKey: string) {}
+  private apiKey: string
+  constructor(apiKey: string) { this.apiKey = apiKey }
 
   async complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse> {
     const system = messages.find((m) => m.role === 'system')?.content

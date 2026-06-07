@@ -82,7 +82,8 @@ export default function MapPanel({ tripId, candidatePins }: Props) {
           icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: '#6366f1', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2, scale: 10 },
         })
         marker.addListener('click', (e: google.maps.MapMouseEvent) => {
-          setPopup({ place, listType: 'plan', position: { x: e.domEvent.clientX, y: e.domEvent.clientY } })
+          const me = e.domEvent as MouseEvent
+          setPopup({ place, listType: 'plan', position: { x: me.clientX, y: me.clientY } })
         })
         markersRef.current.push(marker)
       })
@@ -96,7 +97,8 @@ export default function MapPanel({ tripId, candidatePins }: Props) {
           icon: { path: google.maps.SymbolPath.CIRCLE, fillColor: '#22c55e', fillOpacity: 0.8, strokeColor: '#fff', strokeWeight: 2, scale: 7 },
         })
         marker.addListener('click', (e: google.maps.MapMouseEvent) => {
-          setPopup({ place, listType: 'maybe', position: { x: e.domEvent.clientX, y: e.domEvent.clientY } })
+          const me = e.domEvent as MouseEvent
+          setPopup({ place, listType: 'maybe', position: { x: me.clientX, y: me.clientY } })
         })
         markersRef.current.push(marker)
       })
