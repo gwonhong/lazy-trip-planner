@@ -6,13 +6,7 @@ export let _placesService: google.maps.places.PlacesService | null = null
 
 function getPlacesService(): google.maps.places.PlacesService {
   if (!_placesService) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const PlacesServiceCtor = google.maps.places.PlacesService as any
-    _placesService = PlacesServiceCtor(document.createElement('div'))
-    if (!_placesService || typeof (_placesService as unknown as { textSearch?: unknown }).textSearch !== 'function') {
-      // If calling without new didn't work, try with new
-      _placesService = new google.maps.places.PlacesService(document.createElement('div'))
-    }
+    _placesService = new google.maps.places.PlacesService(document.createElement('div'))
   }
   return _placesService!
 }
@@ -27,7 +21,10 @@ export function textSearchPlaces(query: string, _apiKey: string, nearLocation?: 
     }
     getPlacesService().textSearch(request, (results, status) => {
       if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
-        reject(new Error(`Places search failed: ${status}`))
+        const hint = status === google.maps.places.PlacesServiceStatus.REQUEST_DENIED
+          ? 'REQUEST_DENIED — enable the Places API in Google Cloud Console'
+          : status
+        reject(new Error(`Places search failed: ${hint}`))
         return
       }
       resolve(
@@ -44,17 +41,7 @@ export function textSearchPlaces(query: string, _apiKey: string, nearLocation?: 
 }
 
 export function autocompletePlaces(input: string): Promise<google.maps.places.AutocompletePrediction[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const AutocompleteServiceCtor = google.maps.places.AutocompleteService as any
-  let service: google.maps.places.AutocompleteService
-  try {
-    service = AutocompleteServiceCtor()
-    if (!service || typeof (service as unknown as { getPlacePredictions?: unknown }).getPlacePredictions !== 'function') {
-      service = new google.maps.places.AutocompleteService()
-    }
-  } catch {
-    service = new google.maps.places.AutocompleteService()
-  }
+  const service = new google.maps.places.AutocompleteService()
   return new Promise((resolve) => {
     service.getPlacePredictions({ input }, (predictions, status) => {
       if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {

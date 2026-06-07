@@ -244,8 +244,8 @@ export default function CommandBar({ tripId, onCandidatesChange, focusRef }: Pro
                 const results = await textSearchPlaces(query.trim(), googleMapsApiKey)
                 setCandidates(results)
                 onCandidatesChange(results)
-              } catch {
-                setError('Search failed. Check your Google Maps API key.')
+              } catch (e) {
+                setError(e instanceof Error ? e.message : 'Search failed. Check your Google Maps API key.')
               } finally {
                 setLoading(false)
               }

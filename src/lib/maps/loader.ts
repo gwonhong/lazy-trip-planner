@@ -4,8 +4,10 @@ let loaderPromise: Promise<void> | null = null
 
 export function loadGoogleMaps(apiKey: string): Promise<void> {
   if (!loaderPromise) {
-    setOptions({ key: apiKey, v: 'weekly', libraries: ['places'] })
-    loaderPromise = importLibrary('core').then(() => undefined)
+    setOptions({ key: apiKey, v: 'weekly' })
+    loaderPromise = importLibrary('maps')
+      .then(() => importLibrary('places'))
+      .then(() => undefined)
   }
   return loaderPromise!
 }
