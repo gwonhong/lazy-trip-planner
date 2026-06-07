@@ -1,12 +1,4 @@
-export type LlmTool = {
-  name: string
-  description: string
-  parameters: {
-    type: string
-    properties: Record<string, unknown>
-    required?: string[]
-  }
-}
+import type { LlmTool } from '../llm/index'
 
 export const searchPlacesTool: LlmTool = {
   name: 'searchPlaces',
