@@ -13,10 +13,10 @@ function Handle({ width, setWidth, min, max }: {
 }
 
 describe('usePanelResize', () => {
-  let setWidth: ReturnType<typeof vi.fn>
+  let setWidth: (w: number) => void
 
   beforeEach(() => {
-    setWidth = vi.fn()
+    setWidth = vi.fn() as unknown as (w: number) => void
   })
 
   it('calls setWidth with width + delta on pointermove', () => {
