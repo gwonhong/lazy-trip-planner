@@ -1,12 +1,49 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTripStore } from '../../stores/tripStore'
 import { useSettingsStore } from '../../stores/settingsStore'
-import { autocompletePlaces, getPlaceDetails } from '../../lib/maps/placesSearch'
+import { autocompletePlaces, getPlaceDetails, textSearchPlaces } from '../../lib/maps/placesSearch'
 import ModeToggle from './ModeToggle'
 import PlacePicker from './PlacePicker'
 import CommentaryBubble from './CommentaryBubble'
 import ScopeToggle from './ScopeToggle'
 import type { Place } from '../../types'
+import { createLlmClient } from '../../lib/llm/index'
+import { searchPlacesTool } from '../../lib/maps/searchPlacesTool'
+import type { LlmMessage } from '../../lib/llm/index'
+
+function buildSystemPrompt(scope: 'slot' | 'trip'): string {
+  return `You are a helpful travel planning assistant. The user is editing a trip plan.
+
+The plan is structured as slots (named time blocks), each containing:
+- places: ordered array of Place objects the user will visit
+- maybes: unordered array of Place objects the user might visit if time permits
+
+A Place has: { id, name, googlePlaceId?, lat?, lng?, estimatedDuration? }
+
+Your job: respond with a JSON object matching exactly ONE of these two schemas:
+
+Schema A — when you can make changes directly:
+{
+  "type": "planUpdate",
+  "commentary": "A short travel-advisor note explaining what you changed and why (tips, warnings, suggestions). Be helpful and specific.",
+  ${scope === 'slot'
+    ? '"updatedSlot": { ...full updated Slot object }'
+    : '"updatedSlots": [ ...full updated array of all Slot objects ]'}
+}
+
+Schema B — when you need the user to choose a place (call searchPlaces tool first, then return this):
+{
+  "type": "placePicker",
+  "commentary": "A note explaining what you found.",
+  "suggestedCandidates": [ ...array of Place objects from search results ]
+}
+
+Rules:
+- NEVER invent place names or coordinates. Use the searchPlaces tool to find real places.
+- ALWAYS return valid JSON. No markdown code blocks. No extra text.
+- Keep place IDs unchanged when reordering existing places.
+- New places added from searchPlaces results should keep the Place object returned by the tool.`
+}
 
 type Mode = 'search' | 'plan'
 
@@ -104,9 +141,90 @@ export default function CommandBar({ tripId, onCandidatesChange, focusRef }: Pro
     setQuery('')
   }
 
-  // Plan mode submit — full implementation in Task 15
+  async function executePlanMode(userQuery: string) {
+    const { llmProvider, apiKeys, googleMapsApiKey: mapsKey } = useSettingsStore.getState()
+    const apiKey = apiKeys[llmProvider]
+
+    if (!apiKey && llmProvider !== 'ollama') {
+      setError(`No ${llmProvider} API key configured. Open ⚙ Settings.`)
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+    setCommentary(null)
+
+    try {
+      const client = createLlmClient(llmProvider, apiKey)
+      const scope = useTripStore.getState().llmScope
+      const currentTrip = useTripStore.getState().trips.find((t) => t.id === tripId)!
+      const currentSlot = currentTrip.slots.find((s) => s.id === useTripStore.getState().activeSlotId)
+
+      const contextJson = scope === 'slot'
+        ? JSON.stringify(currentSlot ?? {})
+        : JSON.stringify(currentTrip.slots)
+
+      const messages: LlmMessage[] = [
+        { role: 'system', content: buildSystemPrompt(scope) },
+        { role: 'user', content: `Current ${scope === 'slot' ? 'slot' : 'all slots'}:\n${contextJson}\n\nInstruction: ${userQuery}` },
+      ]
+
+      // Agentic loop: keep running until LLM stops calling tools
+      let iterations = 0
+      while (iterations < 5) {
+        iterations++
+        const response = await client.complete(messages, [searchPlacesTool])
+
+        if (response.toolCalls?.length) {
+          for (const tc of response.toolCalls) {
+            if (tc.name === 'searchPlaces') {
+              const { query: searchQuery, nearLocation } = tc.arguments as { query: string; nearLocation?: { lat: number; lng: number } }
+              const results = await textSearchPlaces(searchQuery, mapsKey, nearLocation)
+              messages.push({ role: 'assistant', content: JSON.stringify(response) })
+              messages.push({
+                role: 'tool',
+                content: JSON.stringify(results),
+                toolCallId: tc.id,
+              })
+            }
+          }
+          continue
+        }
+
+        // Final text response — parse JSON
+        const text = response.content ?? ''
+        const parsed = JSON.parse(text)
+
+        setCommentary(parsed.commentary ?? null)
+
+        if (parsed.type === 'planUpdate') {
+          if (scope === 'slot' && parsed.updatedSlot && currentSlot) {
+            useTripStore.getState().updateSlot(currentSlot.id, parsed.updatedSlot)
+            useTripStore.getState().saveSnapshot(tripId, userQuery, false, parsed.commentary)
+          } else if (scope === 'trip' && parsed.updatedSlots) {
+            for (const updatedSlot of parsed.updatedSlots) {
+              useTripStore.getState().updateSlot(updatedSlot.id, updatedSlot)
+            }
+            useTripStore.getState().saveSnapshot(tripId, userQuery, false, parsed.commentary)
+          }
+        } else if (parsed.type === 'placePicker' && parsed.suggestedCandidates) {
+          setCandidates(parsed.suggestedCandidates)
+          onCandidatesChange(parsed.suggestedCandidates)
+        }
+
+        break
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Try again.')
+    } finally {
+      setLoading(false)
+      setQuery('')
+    }
+  }
+
   function handlePlanSubmit() {
-    setError('Plan mode requires LLM setup (Task 15)')
+    if (!query.trim()) return
+    executePlanMode(query.trim())
   }
 
   return (
