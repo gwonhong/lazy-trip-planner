@@ -1,9 +1,12 @@
 import type { LlmClient, LlmMessage, LlmTool, LlmResponse } from './index'
 
 export class OllamaClient implements LlmClient {
+  private model: string
+  constructor(model: string) { this.model = model }
+
   async complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse> {
     const body: Record<string, unknown> = {
-      model: 'llama3.1',
+      model: this.model,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       stream: false,
     }

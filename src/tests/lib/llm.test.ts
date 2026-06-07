@@ -7,7 +7,7 @@ vi.stubGlobal('fetch', mockFetch)
 beforeEach(() => { mockFetch.mockReset() })
 
 describe('Anthropic provider', () => {
-  const client = createLlmClient('anthropic', 'sk-ant-test')
+  const client = createLlmClient('anthropic', 'sk-ant-test', 'claude-sonnet-4-6')
 
   it('returns text content', async () => {
     mockFetch.mockResolvedValue({
@@ -40,7 +40,7 @@ describe('Anthropic provider', () => {
 })
 
 describe('OpenAI provider', () => {
-  const client = createLlmClient('openai', 'sk-test')
+  const client = createLlmClient('openai', 'sk-test', 'gpt-4o')
 
   it('returns text content', async () => {
     mockFetch.mockResolvedValue({
@@ -53,7 +53,7 @@ describe('OpenAI provider', () => {
 })
 
 describe('Gemini provider', () => {
-  const client = createLlmClient('gemini', 'AIza-test')
+  const client = createLlmClient('gemini', 'AIza-test', 'gemini-2.0-flash')
 
   it('returns text content', async () => {
     mockFetch.mockResolvedValue({
@@ -68,7 +68,7 @@ describe('Gemini provider', () => {
 })
 
 describe('Ollama provider', () => {
-  const client = createLlmClient('ollama', '')
+  const client = createLlmClient('ollama', '', 'llama3.1')
 
   it('returns text content', async () => {
     mockFetch.mockResolvedValue({

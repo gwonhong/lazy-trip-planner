@@ -4,15 +4,35 @@ import type { LlmProvider } from '../../types'
 
 const PROVIDERS: { value: LlmProvider; label: string }[] = [
   { value: 'anthropic', label: 'Anthropic (Claude)' },
-  { value: 'openai', label: 'OpenAI (GPT-4o)' },
+  { value: 'openai', label: 'OpenAI' },
   { value: 'gemini', label: 'Gemini' },
   { value: 'ollama', label: 'Ollama (local)' },
 ]
 
+const MODELS: Record<LlmProvider, { value: string; label: string }[]> = {
+  anthropic: [
+    { value: 'claude-opus-4-8', label: 'Claude Opus 4.8' },
+    { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6' },
+    { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' },
+  ],
+  openai: [
+    { value: 'gpt-4o', label: 'GPT-4o' },
+    { value: 'gpt-4o-mini', label: 'GPT-4o mini' },
+    { value: 'o3', label: 'o3' },
+    { value: 'o4-mini', label: 'o4-mini' },
+  ],
+  gemini: [
+    { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
+    { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+    { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
+  ],
+  ollama: [],
+}
+
 interface Props { onClose: () => void }
 
 export default function SettingsModal({ onClose }: Props) {
-  const { googleMapsApiKey, llmProvider, apiKeys, updateSetting } = useSettingsStore()
+  const { googleMapsApiKey, llmProvider, apiKeys, models, updateSetting } = useSettingsStore()
 
   return (
     <Modal title="Settings" onClose={onClose}>
@@ -48,6 +68,26 @@ export default function SettingsModal({ onClose }: Props) {
               <option key={p.value} value={p.value}>{p.label}</option>
             ))}
           </select>
+
+          <label className="block text-sm text-slate-300 mb-1">Model</label>
+          {llmProvider === 'ollama' ? (
+            <input
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm placeholder:text-slate-500 mb-3"
+              placeholder="e.g. llama3.1, mistral, qwen2.5"
+              value={models[llmProvider]}
+              onChange={(e) => updateSetting('models', { ...models, [llmProvider]: e.target.value })}
+            />
+          ) : (
+            <select
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm mb-3"
+              value={models[llmProvider]}
+              onChange={(e) => updateSetting('models', { ...models, [llmProvider]: e.target.value })}
+            >
+              {MODELS[llmProvider].map((m) => (
+                <option key={m.value} value={m.value}>{m.label}</option>
+              ))}
+            </select>
+          )}
 
           {llmProvider !== 'ollama' && (
             <>

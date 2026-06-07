@@ -2,7 +2,8 @@ import type { LlmClient, LlmMessage, LlmTool, LlmResponse } from './index'
 
 export class GeminiClient implements LlmClient {
   private apiKey: string
-  constructor(apiKey: string) { this.apiKey = apiKey }
+  private model: string
+  constructor(apiKey: string, model: string) { this.apiKey = apiKey; this.model = model }
 
   async complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse> {
     const system = messages.find((m) => m.role === 'system')?.content
@@ -26,7 +27,7 @@ export class GeminiClient implements LlmClient {
     }
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
     )
     if (!res.ok) throw new Error(`Gemini API error: ${res.status}`)

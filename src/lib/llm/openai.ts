@@ -2,11 +2,12 @@ import type { LlmClient, LlmMessage, LlmTool, LlmResponse } from './index'
 
 export class OpenAiClient implements LlmClient {
   private apiKey: string
-  constructor(apiKey: string) { this.apiKey = apiKey }
+  private model: string
+  constructor(apiKey: string, model: string) { this.apiKey = apiKey; this.model = model }
 
   async complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse> {
     const body: Record<string, unknown> = {
-      model: 'gpt-4o',
+      model: this.model,
       messages: messages.map((m) => ({
         role: m.role,
         content: m.content,

@@ -3,6 +3,7 @@ export type LlmProvider = 'anthropic' | 'openai' | 'gemini' | 'ollama'
 export type Settings = {
   llmProvider: LlmProvider
   apiKeys: { anthropic: string; openai: string; gemini: string; ollama: string }
+  models: { anthropic: string; openai: string; gemini: string; ollama: string }
   googleMapsApiKey: string
 }
 

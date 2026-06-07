@@ -31,11 +31,11 @@ export interface LlmClient {
   complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse>
 }
 
-export function createLlmClient(provider: LlmProvider, apiKey: string): LlmClient {
+export function createLlmClient(provider: LlmProvider, apiKey: string, model: string): LlmClient {
   switch (provider) {
-    case 'anthropic': return new AnthropicClient(apiKey)
-    case 'openai': return new OpenAiClient(apiKey)
-    case 'gemini': return new GeminiClient(apiKey)
-    case 'ollama': return new OllamaClient()
+    case 'anthropic': return new AnthropicClient(apiKey, model)
+    case 'openai': return new OpenAiClient(apiKey, model)
+    case 'gemini': return new GeminiClient(apiKey, model)
+    case 'ollama': return new OllamaClient(model)
   }
 }
