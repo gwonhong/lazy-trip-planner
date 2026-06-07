@@ -10,6 +10,9 @@ import HistoryPanel from '../components/trip/HistoryPanel'
 import MapPanel from '../components/trip/MapPanel'
 import CommandBar from '../components/trip/CommandBar'
 import type { Place } from '../types'
+import { useLayoutStore } from '../stores/layoutStore'
+import { usePanelResize } from '../lib/usePanelResize'
+import ResizeDivider from '../components/shared/ResizeDivider'
 
 export default function TripPage() {
   const { id } = useParams<{ id: string }>()
@@ -20,6 +23,14 @@ export default function TripPage() {
   const [showSettings, setShowSettings] = useState(false)
   const [candidatePins, setCandidatePins] = useState<Place[]>([])
   const focusSearchRef = useRef<(() => void) | null>(null)
+
+  const leftPanelWidth = useLayoutStore((s) => s.leftPanelWidth)
+  const rightPanelWidth = useLayoutStore((s) => s.rightPanelWidth)
+  const setLeftPanelWidth = useLayoutStore((s) => s.setLeftPanelWidth)
+  const setRightPanelWidth = useLayoutStore((s) => s.setRightPanelWidth)
+
+  const onLeftResize = usePanelResize(leftPanelWidth, setLeftPanelWidth, 200, 480)
+  const onRightResize = usePanelResize(rightPanelWidth, setRightPanelWidth, 150, 400)
 
   if (!trip) {
     return (
@@ -65,8 +76,8 @@ export default function TripPage() {
       {/* Three-panel body */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Left panel: date sidebar + slot detail */}
-        <div className="w-72 flex-shrink-0 border-r border-slate-800 flex overflow-hidden">
-          {/* Date sidebar takes ~40% width */}
+        <div className="flex-shrink-0 flex overflow-hidden" style={{ width: leftPanelWidth }}>
+          {/* Date sidebar takes fixed 144px */}
           <div className="w-36 flex-shrink-0 border-r border-slate-800 overflow-hidden">
             <DateSidebar tripId={trip.id} />
           </div>
@@ -84,6 +95,9 @@ export default function TripPage() {
             )}
           </div>
         </div>
+
+        {/* Left resize divider */}
+        <ResizeDivider onPointerDown={onLeftResize} />
 
         {/* Middle panel: map */}
         <div className="flex-1 relative overflow-hidden">
@@ -103,9 +117,12 @@ export default function TripPage() {
 
         {/* Right panel: history */}
         {!historyCollapsed && (
-          <div className="w-56 flex-shrink-0 border-l border-slate-800 flex flex-col overflow-hidden">
-            <HistoryPanel tripId={trip.id} />
-          </div>
+          <>
+            <ResizeDivider onPointerDown={onRightResize} />
+            <div className="flex-shrink-0 flex flex-col overflow-hidden" style={{ width: rightPanelWidth }}>
+              <HistoryPanel tripId={trip.id} />
+            </div>
+          </>
         )}
       </div>
 
