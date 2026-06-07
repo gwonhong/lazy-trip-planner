@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTripStore } from '../stores/tripStore'
+import { useSettingsStore } from '../stores/settingsStore'
 import SettingsModal from '../components/shared/SettingsModal'
 import CollapseHandle from '../components/trip/CollapseHandle'
 import DateSidebar from '../components/trip/DateSidebar'
@@ -33,6 +34,16 @@ export default function TripPage() {
 
   const activeSlot = trip.slots.find((s) => s.id === activeSlotId) ?? null
 
+  const googleMapsApiKey = useSettingsStore((s) => s.googleMapsApiKey)
+  const llmApiKey = useSettingsStore((s) => {
+    const { llmProvider, apiKeys } = s
+    return llmProvider === 'ollama' ? 'ollama' : apiKeys[llmProvider]
+  })
+
+  const missingKeys: string[] = []
+  if (!googleMapsApiKey) missingKeys.push('Google Maps API key')
+  if (!llmApiKey) missingKeys.push(`${useSettingsStore.getState().llmProvider} API key`)
+
   return (
     <div className="h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden">
       {/* Header */}
@@ -44,6 +55,12 @@ export default function TripPage() {
         </div>
         <button onClick={() => setShowSettings(true)} aria-label="Settings" className="text-slate-400 hover:text-slate-200 text-xl">⚙</button>
       </header>
+
+      {missingKeys.length > 0 && (
+        <div className="bg-amber-900/40 border-b border-amber-800 px-6 py-2 text-xs text-amber-300 flex items-center justify-between flex-shrink-0">
+          <span>⚠ Missing: {missingKeys.join(', ')}. Configure in ⚙ Settings.</span>
+        </div>
+      )}
 
       {/* Three-panel body */}
       <div className="flex flex-1 overflow-hidden relative">
