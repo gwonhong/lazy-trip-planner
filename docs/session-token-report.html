@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>세션 토큰 사용량 리포트 — Lazy Trip Planner 빌드</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:      #0f172a;
+    --surface: #1e293b;
+    --border:  #334155;
+    --text:    #e2e8f0;
+    --muted:   #94a3b8;
+    --accent:  #6366f1;
+    --green:   #22c55e;
+    --amber:   #f59e0b;
+    --red:     #ef4444;
+    --blue:    #38bdf8;
+    --purple:  #a78bfa;
+    --orange:  #fb923c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 40px 24px 80px;
+  }
+  .page { max-width: 1120px; margin: 0 auto; }
+
+  /* ── Header */
+  .header { margin-bottom: 44px; }
+  .header h1 { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+  .header .sub { color: var(--muted); margin-top: 6px; font-size: 13px; }
+  .badge {
+    display: inline-block; border-radius: 999px; padding: 2px 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: .05em; margin-right: 6px;
+  }
+  .badge-indigo { background: var(--accent); color: #fff; }
+  .badge-slate  { background: #334155; color: var(--muted); }
+
+  /* ── Stat cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 14px; margin-bottom: 44px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .card .label { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 7px; }
+  .card .value { font-size: 28px; font-weight: 800; }
+  .card .note  { color: var(--muted); font-size: 11px; margin-top: 3px; }
+  .c-accent  { color: var(--accent); }
+  .c-green   { color: var(--green); }
+  .c-amber   { color: var(--amber); }
+  .c-blue    { color: var(--blue); }
+  .c-purple  { color: var(--purple); }
+  .c-orange  { color: var(--orange); }
+  .c-red     { color: var(--red); }
+  .c-white   { color: #fff; }
+
+  /* ── Sections */
+  .section { margin-bottom: 52px; }
+  .section > h2 {
+    font-size: 15px; font-weight: 700; color: #fff;
+    border-left: 3px solid var(--accent); padding-left: 12px; margin-bottom: 20px;
+  }
+
+  /* ── Grid helpers */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; } }
+
+  .chart-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px 24px;
+  }
+  .chart-box h3 {
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .07em; margin-bottom: 16px;
+  }
+  .chart-box canvas { display: block; }
+
+  /* ── Time-token big chart */
+  .big-chart {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 28px; margin-bottom: 0;
+  }
+  .big-chart h3 {
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px;
+  }
+  .big-chart p { font-size: 12px; color: var(--muted); margin-bottom: 18px; }
+  .legend-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+  .legend-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-dash { width: 22px; height: 2px; flex-shrink: 0; border-top: 2px dashed; }
+
+  /* ── Plan comparison */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 720px) { .plans { grid-template-columns: 1fr; } }
+  .plan-card {
+    background: var(--surface); border: 2px solid var(--border);
+    border-radius: 16px; padding: 22px; position: relative;
+  }
+  .plan-card.highlight { border-color: var(--accent); }
+  .plan-card .plan-tier  { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 4px; }
+  .plan-card .plan-name  { font-size: 19px; font-weight: 800; color: #fff; }
+  .plan-card .plan-price { font-size: 30px; font-weight: 900; color: var(--accent); margin: 8px 0 2px; }
+  .plan-card .plan-price small { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .plan-card .plan-mult  { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .now-badge {
+    position: absolute; top: 14px; right: 14px;
+    background: var(--accent); color: #fff; font-size: 10px;
+    font-weight: 800; padding: 3px 10px; border-radius: 999px; letter-spacing: .04em;
+  }
+  .plan-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 0; border-top: 1px solid var(--border); font-size: 12px;
+  }
+  .plan-row .k { color: var(--muted); }
+  .plan-row .v { font-weight: 700; }
+  .ok   { color: var(--green); }
+  .warn { color: var(--amber); }
+  .bad  { color: var(--red); }
+
+  /* ── Task table */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .07em;
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+  }
+  td { padding: 9px 16px; border-bottom: 1px solid #1e2d3f; font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.02); }
+  .bar-bg   { background: var(--bg); border-radius: 4px; height: 5px; width: 100px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  .bar-fill { background: var(--accent); height: 100%; border-radius: 4px; }
+
+  /* ── Insight */
+  .insight {
+    background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.25);
+    border-radius: 12px; padding: 16px 20px; font-size: 13px; color: var(--text);
+    margin-top: 18px; line-height: 1.75;
+  }
+  .insight strong { color: #fff; }
+  .insight.amber {
+    background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.25);
+  }
+
+  /* ── Summary table */
+  .sum-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px; margin-top: 20px;
+  }
+  @media (max-width: 720px) { .sum-grid { grid-template-columns: 1fr; } }
+  .sum-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .sum-item .sk { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .sum-item .sv { font-size: 16px; font-weight: 700; color: #fff; }
+
+  footer {
+    text-align: center; color: var(--muted); font-size: 11px;
+    margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ────── Header ────── -->
+  <div class="header">
+    <div style="margin-bottom:12px">
+      <span class="badge badge-indigo">바이브 코딩 스터디</span>
+      <span class="badge badge-slate">claude-sonnet-4-6</span>
+      <span class="badge badge-slate">Max 플랜 ($100)</span>
+    </div>
+    <h1>세션 토큰 사용량 리포트</h1>
+    <p class="sub">Lazy Trip Planner 풀스택 SPA 빌드 · 2026년 6월 6–7일 · 약 25시간 35분 · 태스크 2–16 완료</p>
+  </div>
+
+  <!-- ────── Key Numbers ────── -->
+  <div class="cards">
+    <div class="card">
+      <div class="label">캐시 읽기</div>
+      <div class="value c-accent">30.6M</div>
+      <div class="note">프롬프트 캐시에서 읽은 토큰</div>
+    </div>
+    <div class="card">
+      <div class="label">캐시 쓰기</div>
+      <div class="value c-blue">1.69M</div>
+      <div class="note">캐시에 저장된 토큰</div>
+    </div>
+    <div class="card">
+      <div class="label">출력 토큰</div>
+      <div class="value c-purple">472K</div>
+      <div class="note">오케스트레이터 생성 토큰</div>
+    </div>
+    <div class="card">
+      <div class="label">서브에이전트</div>
+      <div class="value c-orange">251K</div>
+      <div class="note">11개 태스크 에이전트 합계</div>
+    </div>
+    <div class="card">
+      <div class="label">API 등가 비용</div>
+      <div class="value c-green">$24.71</div>
+      <div class="note">캐시 적용 기준</div>
+    </div>
+    <div class="card">
+      <div class="label">캐시 없을 경우</div>
+      <div class="value c-red">$106.04</div>
+      <div class="note">4.3× 더 비쌈</div>
+    </div>
+    <div class="card">
+      <div class="label">도구 호출 횟수</div>
+      <div class="value c-white">201</div>
+      <div class="note">8가지 도구 유형</div>
+    </div>
+    <div class="card">
+      <div class="label">통과 테스트</div>
+      <div class="value c-green">35</div>
+      <div class="note">8개 파일, 실패 0건</div>
+    </div>
+  </div>
+
+  <!-- ────── TIME–TOKEN GRAPH ────── -->
+  <div class="section">
+    <h2>누적 토큰 사용량 vs. 플랜 한도</h2>
+
+    <div class="big-chart">
+      <h3>시간별 누적 토큰 (출력 + 캐시쓰기)</h3>
+      <p>X축 = LLM 실제 처리 시간(사용자 대기 구간 완전 제거, 총 약 5.2시간). Y축 = 현재 5시간 실시간 윈도우 내 누적 토큰. 세로 점선은 5시간 리셋 시점입니다.</p>
+
+      <div class="legend-row">
+        <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>현재 5시간 윈도우 토큰</div>
+        <div class="legend-item"><div class="legend-dash" style="border-color:#ef4444"></div><span>Pro $20 한도 (500K / 5시간)</span></div>
+        <div class="legend-item"><div class="legend-dash" style="border-color:rgba(148,163,184,0.7)"></div><span>5시간 리셋 시점 (실시간 기준)</span></div>
+      </div>
+
+      <canvas id="timeChart" style="max-height:380px"></canvas>
+    </div>
+
+    <div class="insight amber" style="margin-top:16px">
+      <strong>📊 그래프 해석:</strong> LLM이 실제 응답을 생성한 총 시간은 약 <strong>5.2시간</strong>으로, 25시간 세션의 20%에 불과합니다. 나머지 80%는 사용자 입력 대기 시간입니다.
+      <br><br>
+      <strong>윈도우 1 (실시간 0–5h):</strong> ~373K 토큰 → Pro 한도 미달 ✓<br>
+      <strong>윈도우 2 (실시간 5–10h):</strong> 리셋 후 <strong>처리 시간 약 1.2시간 만에 500K 돌파</strong>, 최종 1.4M 사용 — Pro 사용자라면 이 윈도우에서만 수 차례 차단 ✗<br>
+      <strong>윈도우 5–6 (실시간 20h~):</strong> 각각 ~391K / ~324K → 한도 내 ✓
+    </div>
+  </div>
+
+  <!-- ────── Token Breakdown ────── -->
+  <div class="section">
+    <h2>토큰 유형별 분포 &amp; 비용</h2>
+    <div class="two-col">
+      <div class="chart-box">
+        <h3>토큰 유형별 비율</h3>
+        <canvas id="donutChart" style="max-height:260px"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>카테고리별 API 등가 비용 (USD)</h3>
+        <canvas id="costBar" style="max-height:260px"></canvas>
+      </div>
+    </div>
+    <div class="insight">
+      <strong>캐시가 핵심입니다.</strong> 30.6M 캐시 읽기 토큰은 MTok당 $0.30으로 청구되지만,
+      캐시 없이 전량 입력으로 처리하면 MTok당 $3.00 — <strong>10배 차이</strong>입니다.
+      16개 태스크 플랜 문서, 타입 정의, 스토어 코드를 매 턴마다 재로딩하면서도
+      비용이 폭발하지 않은 이유가 바로 여기에 있습니다.
+      캐시 덕분에 <strong>$106 → $25</strong>로 절감했습니다.
+    </div>
+  </div>
+
+  <!-- ────── Subagent Table ────── -->
+  <div class="section">
+    <h2>서브에이전트별 토큰 사용량</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>태스크</th>
+            <th>토큰</th>
+            <th style="min-width:150px">비율</th>
+            <th>API 비용</th>
+            <th>병렬</th>
+          </tr>
+        </thead>
+        <tbody id="taskTable"></tbody>
+      </table>
+    </div>
+    <div class="insight">
+      <strong>에이전트당 평균 22,821 토큰.</strong> 각 서브에이전트는 완전히 격리된 컨텍스트에서
+      단일 태스크에만 집중하므로, 오케스트레이터 전체 컨텍스트를 매번 로드하지 않아도 됩니다.
+      태스크 14(LLM 클라이언트)는 별도 git worktree에서 <strong>병렬 실행</strong>되었고,
+      태스크 13 완료 후 병합(merge)되었습니다.
+    </div>
+  </div>
+
+  <!-- ────── Tool Calls ────── -->
+  <div class="section">
+    <h2>도구 호출 분포</h2>
+    <div class="two-col">
+      <div class="chart-box">
+        <h3>도구별 호출 횟수</h3>
+        <canvas id="toolBar" style="max-height:260px"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>역할별 분류</h3>
+        <canvas id="orchPie" style="max-height:260px"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ────── Plan Comparison ────── -->
+  <div class="section">
+    <h2>플랜 비교: Pro vs Max</h2>
+    <div class="plans">
+
+      <div class="plan-card">
+        <div class="plan-tier">플랜</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$20 <small>/ 월</small></div>
+        <div class="plan-mult">기준 사용량 (1×)</div>
+        <div class="plan-row"><span class="k">월 예산 등가</span><span class="v">~$20–25</span></div>
+        <div class="plan-row"><span class="k">이 세션 처리 가능?</span><span class="v bad">불가 (5× 초과)</span></div>
+        <div class="plan-row"><span class="k">속도 제한 중단</span><span class="v bad">5–8회 예상</span></div>
+        <div class="plan-row"><span class="k">예상 실제 소요 시간</span><span class="v warn">3–5일</span></div>
+        <div class="plan-row"><span class="k">유사 세션 / 월</span><span class="v bad">~1 (한도 도달)</span></div>
+        <div class="plan-row"><span class="k">한도 초과 시점</span><span class="v bad">시작 5.5시간</span></div>
+      </div>
+
+      <div class="plan-card highlight">
+        <div class="now-badge">현재 플랜</div>
+        <div class="plan-tier">플랜</div>
+        <div class="plan-name">Max ($100)</div>
+        <div class="plan-price">$100 <small>/ 월</small></div>
+        <div class="plan-mult">Pro의 5× 사용량</div>
+        <div class="plan-row"><span class="k">월 예산 등가</span><span class="v">~$100–125</span></div>
+        <div class="plan-row"><span class="k">이 세션 처리 가능?</span><span class="v warn">간신히 (~100%)</span></div>
+        <div class="plan-row"><span class="k">속도 제한 중단</span><span class="v ok">없음</span></div>
+        <div class="plan-row"><span class="k">실제 소요 시간</span><span class="v ok">25시간 (연속)</span></div>
+        <div class="plan-row"><span class="k">유사 세션 / 월</span><span class="v ok">~4회</span></div>
+        <div class="plan-row"><span class="k">한도 초과 시점</span><span class="v warn">25시간 직후</span></div>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-tier">플랜</div>
+        <div class="plan-name">Max ($200)</div>
+        <div class="plan-price">$200 <small>/ 월</small></div>
+        <div class="plan-mult">Pro의 20× 사용량</div>
+        <div class="plan-row"><span class="k">월 예산 등가</span><span class="v">~$400–500</span></div>
+        <div class="plan-row"><span class="k">이 세션 처리 가능?</span><span class="v ok">여유 (25% 사용)</span></div>
+        <div class="plan-row"><span class="k">속도 제한 중단</span><span class="v ok">없음</span></div>
+        <div class="plan-row"><span class="k">실제 소요 시간</span><span class="v ok">25시간 (연속)</span></div>
+        <div class="plan-row"><span class="k">유사 세션 / 월</span><span class="v ok">~16회</span></div>
+        <div class="plan-row"><span class="k">한도 초과 시점</span><span class="v ok">없음</span></div>
+      </div>
+    </div>
+
+    <div class="chart-box" style="margin-top:18px">
+      <h3>월별 유사 세션 수 — 플랜별</h3>
+      <canvas id="planBar" style="max-height:180px"></canvas>
+    </div>
+
+    <div class="insight">
+      <strong>Pro 플랜으로 이 세션을 진행했다면?</strong><br>
+      이 세션 하나의 API 등가 비용은 <strong>$24.71</strong>로, Pro 플랜 한 달 예산에 육박합니다.
+      Pro 사용자는 약 5.5시간 만에 첫 번째 속도 제한에 부딪히고,
+      세션 전체에 걸쳐 <strong>5–8차례</strong> 중단이 발생했을 것입니다.
+      각 중단마다 수 시간을 기다려야 하므로, 25시간짜리 연속 작업이 <strong>3–5일</strong>짜리 단편적인 작업으로 바뀝니다.
+      <br><br>
+      <strong>Max $100 대비 Pro의 결정적 차이는 비용이 아니라 흐름입니다.</strong>
+      에이전트 기반 코딩은 컨텍스트가 살아있는 동안 연속적으로 실행될 때 가장 효과적입니다.
+      중단이 잦으면 컨텍스트 재구성 비용(캐시 미스)과 재작업이 급증합니다.
+    </div>
+  </div>
+
+  <footer>
+    생성일: 2026년 6월 7일 &nbsp;·&nbsp; 모델: claude-sonnet-4-6 &nbsp;·&nbsp;
+    가격 기준: 입력 $3/MTok · 출력 $15/MTok · 캐시 쓰기 $3.75/MTok · 캐시 읽기 $0.30/MTok
+  </footer>
+</div>
+
+<script>
+/* ── Palette ── */
+const C = {
+  accent: '#6366f1', green: '#22c55e', blue: '#38bdf8',
+  purple: '#a78bfa', orange: '#fb923c', amber: '#f59e0b',
+  red: '#ef4444', muted: '#475569', surface: '#1e293b'
+};
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e293b';
+
+/* ════════════════════════════════════════════
+   1. TIME–TOKEN CHART
+   ════════════════════════════════════════════ */
+const RAW = [[0.0,10737],[0.0,21474],[0.0,32211],[0.0,42948],[0.001,44334],[0.002,45720],[0.002,47106],[0.003,47699],[0.003,48292],[0.004,49193],[0.004,50094],[0.004,50995],[0.004,51896],[0.005,52797],[0.005,53698],[0.005,54599],[0.006,55567],[0.006,56862],[0.007,58157],[0.007,59452],[0.008,59773],[0.541,60469],[0.542,61165],[0.689,61851],[0.689,62537],[0.69,65438],[0.69,68339],[0.692,72802],[0.692,77265],[0.692,81728],[0.697,82179],[0.698,82405],[0.699,82620],[0.874,82906],[0.876,83369],[0.885,84297],[0.885,85225],[0.917,88655],[0.917,92085],[0.925,95515],[0.927,98409],[0.965,99408],[0.965,100407],[0.966,101406],[0.967,104773],[0.967,108140],[0.973,111507],[0.974,113989],[0.994,114533],[0.994,115077],[3.76,150785],[3.76,186493],[3.772,222201],[3.773,226954],[3.781,227226],[3.782,227498],[3.784,227880],[3.786,232381],[3.786,236882],[3.797,241383],[3.798,245733],[3.831,249219],[3.831,252705],[3.84,256191],[3.84,259949],[3.888,263350],[3.889,266751],[3.898,270152],[3.899,273556],[3.937,276021],[3.937,278486],[3.943,280951],[3.944,283463],[3.976,284125],[3.977,284787],[4.031,287896],[4.032,291005],[4.037,294114],[4.039,300044],[4.049,305974],[4.05,309315],[4.147,313591],[4.147,317867],[4.16,322143],[4.161,326444],[4.19,330348],[4.2,334252],[4.201,338166],[4.245,339433],[4.245,340700],[4.246,341967],[4.246,343356],[4.247,344745],[4.247,344986],[4.317,346362],[4.319,347738],[4.345,349557],[4.345,351376],[4.345,353195],[4.345,355014],[4.348,355843],[4.533,356345],[4.535,356847],[4.592,357582],[4.593,358317],[4.656,359122],[4.659,359927],[4.691,360861],[4.693,361795],[4.771,362893],[4.773,363991],[4.823,364970],[4.825,365949],[4.922,367462],[4.924,368975],[4.982,370939],[4.984,372903],[5.055,375317],[5.057,377731],[5.137,378876],[5.137,380021],[5.137,381166],[5.138,382274],[5.153,385304],[5.154,388475],[5.154,391646],[5.154,394817],[5.154,397988],[5.155,398303],[5.158,403023],[5.159,407743],[5.161,412463],[5.162,413919],[5.164,414563],[5.167,415573],[5.168,416395],[5.168,417217],[5.169,417702],[5.169,418187],[5.17,418672],[5.2,419737],[5.2,420449],[5.293,420775],[5.293,421101],[5.293,421427],[5.294,421763],[5.318,428649],[5.318,435535],[5.318,442421],[5.35,460291],[5.35,478161],[5.35,496031],[5.45,528074],[5.547,560115],[5.647,592156],[6.094,737313],[6.21,882470],[6.267,938629],[6.267,994788],[6.267,1050947],[6.268,1051824],[6.269,1052476],[6.27,1052780],[6.271,1053254],[6.272,1053991],[6.272,1054728],[6.272,1055465],[6.274,1056350],[6.276,1057256],[6.933,1059816],[6.933,1062376],[6.934,1064315],[6.934,1066254],[6.935,1067073],[6.935,1067892],[6.936,1068128],[7.01,1068497],[7.01,1068866],[7.011,1069235],[7.012,1069659],[7.015,1070928],[7.016,1072197],[7.016,1073466],[7.019,1076300],[7.021,1077716],[7.082,1078497],[7.082,1079278],[7.083,1080059],[7.084,1080954],[7.186,1081342],[7.186,1081730],[7.188,1085529],[7.188,1089328],[7.189,1092082],[7.189,1094836],[7.19,1097590],[7.196,1098222],[7.196,1098854],[7.211,1099531],[7.211,1100208],[7.212,1100915],[7.213,1101622],[7.213,1102069],[7.214,1102285],[7.256,1102497],[7.294,1102711],[7.297,1102953],[7.299,1103227],[7.308,1103744],[7.332,1104825],[7.332,1105906],[7.333,1106987],[7.333,1107950],[7.334,1108270],[7.335,1108512],[7.343,1108778],[7.347,1109276],[7.347,1109774],[7.347,1110272],[7.35,1111675],[7.35,1113078],[7.351,1114472],[7.351,1115120],[7.353,1115574],[7.353,1116028],[7.353,1116482],[7.354,1117833],[7.354,1118243],[7.356,1120616],[7.356,1122989],[7.356,1125362],[7.357,1125763],[7.358,1126109],[7.359,1126418],[7.36,1126708],[7.361,1126988],[7.362,1127278],[7.363,1127590],[7.364,1127910],[7.365,1128231],[7.366,1128537],[7.368,1128855],[7.369,1129189],[7.37,1129524],[7.371,1129840],[7.372,1130129],[7.373,1130512],[7.373,1130895],[7.373,1131278],[7.375,1133598],[7.379,1138455],[7.379,1143312],[7.379,1148169],[7.386,1150813],[7.517,1154129],[7.517,1157445],[7.519,1160761],[7.522,1162445],[7.522,1164129],[7.523,1165813],[7.527,1166493],[7.529,1166674],[7.529,1166855],[7.542,1170985],[7.889,1175974],[7.892,1176888],[7.896,1177990],[7.896,1179092],[7.897,1180194],[7.897,1181296],[7.899,1191685],[7.899,1202074],[7.899,1212463],[7.904,1212987],[7.906,1213308],[7.914,1213624],[7.914,1213940],[7.914,1214256],[7.926,1219322],[7.929,1224388],[7.958,1230908],[7.959,1237428],[7.959,1243948],[7.959,1250468],[7.974,1251007],[8.216,1374883],[8.216,1498759],[8.218,1499363],[8.218,1499967],[8.219,1500571],[8.222,1501681],[8.241,1503403],[8.241,1503661],[8.242,1503919],[8.243,1512059],[8.243,1520199],[8.243,1528339],[8.244,1536479],[8.245,1551213],[8.254,1565947],[8.33,1586105],[8.33,1606263],[8.33,1626421],[8.331,1630121],[8.332,1635437],[8.332,1640753],[8.333,1647595],[8.334,1656641],[8.335,1666821],[8.335,1677001],[8.336,1686911],[8.338,1692879],[8.338,1698847],[8.345,1704815],[8.396,1708206],[8.396,1711597],[8.396,1712984],[8.396,1714371],[8.396,1715758],[8.396,1717145],[8.402,1719017],[8.451,1720978],[8.451,1722939],[8.458,1725609],[8.53,1728428],[8.53,1731247],[8.53,1734066],[8.536,1734476],[8.536,1734886],[8.537,1735435],[8.537,1735984],[8.537,1736533],[8.548,1740037],[8.571,1743841],[8.571,1747645],[8.579,1750267],[8.612,1753310],[8.612,1756353],[9.168,1759531],[9.732,1763195],[9.732,1766859],[9.741,1769396],[24.709,1861239],[24.709,1953082],[24.709,2044925],[24.709,2136768],[24.725,2141766],[24.757,2146608],[24.758,2146854],[24.758,2147100],[24.759,2147478],[24.76,2147999],[24.761,2148337],[24.761,2148675],[24.762,2149361],[24.763,2149803],[24.765,2150178],[24.765,2150553],[24.775,2152884],[24.792,2155610],[24.792,2158336],[24.796,2159346],[24.837,2160570],[24.837,2160738],[24.839,2161327],[25.582,2265356],[25.582,2369385],[25.583,2473414],[25.585,2474361],[25.588,2475276],[25.596,2476308],[25.605,2477821],[25.853,2481689],[25.855,2485557],[25.884,2495833],[25.885,2503219],[25.888,2503635],[25.913,2505739],[25.916,2507843]];
+
+/* ── 5h-window chart: X = compressed LLM time, Y = tokens in current window ── */
+const IDLE_THRESH = 2 / 60;  // gaps > 2 min are idle → removed
+const WIN_H = 5;              // window size in real hours
+const PRO   = 0.50;           // 500K limit per window
+const MAX_Y = 1.5;
+
+// Cumulative tokens at a given real time (linear interpolation)
+function tokenAtRealT(t) {
+  if (t <= RAW[0][0]) return RAW[0][1];
+  for (let i = 1; i < RAW.length; i++) {
+    if (RAW[i][0] >= t) {
+      const frac = (t - RAW[i-1][0]) / (RAW[i][0] - RAW[i-1][0]);
+      return RAW[i-1][1] + frac * (RAW[i][1] - RAW[i-1][1]);
+    }
+  }
+  return RAW[RAW.length - 1][1];
+}
+
+// Tokens at start of each window (= cumulative at window boundary)
+function windowBase(realH) {
+  const idx = Math.floor(realH / WIN_H);
+  return idx === 0 ? 0 : tokenAtRealT(idx * WIN_H);
+}
+
+// Build compressed timestamps (remove idle gaps)
+const cTimes = [0];
+for (let i = 1; i < RAW.length; i++) {
+  const gap = RAW[i][0] - RAW[i-1][0];
+  cTimes.push(cTimes[i - 1] + (gap > IDLE_THRESH ? 0 : gap));
+}
+const maxCT = cTimes[cTimes.length - 1];
+
+// Compressed time at a real-time boundary (falls in idle → use left edge)
+function compressedAtRealT(t) {
+  for (let i = 1; i < RAW.length; i++) {
+    if (RAW[i][0] >= t) {
+      const gap = RAW[i][0] - RAW[i-1][0];
+      if (gap > IDLE_THRESH) return cTimes[i - 1];
+      return cTimes[i - 1] + (t - RAW[i-1][0]) / gap * gap;
+    }
+  }
+  return maxCT;
+}
+
+// Main curve data — null break at each window boundary
+const curveData = [];
+let lastW = -1;
+for (let i = 0; i < RAW.length; i++) {
+  const [h, c] = RAW[i];
+  const w = Math.floor(h / WIN_H);
+  if (w !== lastW && lastW >= 0) curveData.push({ x: cTimes[i], y: null });
+  lastW = w;
+  curveData.push({ x: cTimes[i], y: (c - windowBase(h)) / 1e6 });
+}
+
+// Vertical reset line datasets (deduplicated by compressed position)
+const seenCT = new Set();
+const resetDS = [];
+for (let t = WIN_H; t <= RAW[RAW.length-1][0]; t += WIN_H) {
+  const cT = +compressedAtRealT(t).toFixed(4);
+  const key = cT.toFixed(3);
+  if (seenCT.has(key)) continue;
+  seenCT.add(key);
+  resetDS.push({
+    label: `리셋 ${t}h`,
+    data: [{ x: cT, y: 0 }, { x: cT, y: MAX_Y }],
+    borderColor: 'rgba(148,163,184,0.45)',
+    borderWidth: 1.5,
+    borderDash: [4, 4],
+    pointRadius: 0,
+    fill: false,
+    tension: 0,
+    parsing: false,
+    order: 3,
+  });
+}
+
+const chartMaxX = Math.ceil(maxCT * 10 + 1) / 10;
+
+new Chart(document.getElementById('timeChart'), {
+  type: 'line',
+  data: {
+    datasets: [
+      {
+        label: '현재 윈도우 토큰',
+        data: curveData,
+        borderColor: C.accent,
+        backgroundColor: 'rgba(99,102,241,0.09)',
+        borderWidth: 2.5,
+        pointRadius: 0,
+        fill: true,
+        tension: 0.25,
+        parsing: false,
+        spanGaps: false,
+        order: 1,
+      },
+      {
+        label: 'Pro $20 한도 (500K)',
+        data: [{ x: 0, y: PRO }, { x: chartMaxX, y: PRO }],
+        borderColor: C.red,
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        fill: false,
+        tension: 0,
+        parsing: false,
+        order: 2,
+      },
+      ...resetDS,
+    ]
+  },
+  options: {
+    animation: false,
+    parsing: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        filter: item => item.dataset.label === '현재 윈도우 토큰',
+        callbacks: {
+          title: items => `처리 시간 ${items[0].parsed.x.toFixed(3)}h`,
+          label: item => item.parsed.y !== null
+            ? ` 윈도우 내 ${(item.parsed.y * 1000).toFixed(0)}K 토큰`
+            : ' (윈도우 전환)',
+        }
+      }
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        min: 0, max: chartMaxX,
+        title: { display: true, text: 'LLM 처리 시간 (아이들 제외, 시간)', color: '#94a3b8', font: { size: 11 } },
+        ticks: { stepSize: 0.5, callback: v => v + 'h' },
+        grid: { color: '#1e2d3f' },
+      },
+      y: {
+        title: { display: true, text: '윈도우 내 토큰 (M)', color: '#94a3b8', font: { size: 11 } },
+        min: 0, max: MAX_Y,
+        ticks: { callback: v => v + 'M' },
+        grid: { color: '#1e2d3f' },
+      }
+    }
+  }
+});
+
+/* ════════════════════════════════════════════
+   2. DONUT
+   ════════════════════════════════════════════ */
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['캐시 읽기 (30.6M)', '캐시 쓰기 (1.69M)', '출력 (472K)', '서브에이전트 (251K)', '입력 (0.7K)'],
+    datasets: [{
+      data: [30593838, 1689114, 472213, 251033, 711],
+      backgroundColor: [C.accent, C.blue, C.purple, C.orange, C.muted],
+      borderColor: '#0f172a', borderWidth: 3, hoverOffset: 8,
+    }]
+  },
+  options: {
+    cutout: '62%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 }, boxWidth: 12 } },
+      tooltip: { callbacks: { label: c => ' ' + c.parsed.toLocaleString() + ' 토큰' } }
+    }
+  }
+});
+
+/* ════════════════════════════════════════════
+   3. COST BAR
+   ════════════════════════════════════════════ */
+new Chart(document.getElementById('costBar'), {
+  type: 'bar',
+  data: {
+    labels: ['캐시 읽기\n$0.30/MTok', '출력\n$15/MTok', '캐시 쓰기\n$3.75/MTok', '서브에이전트\n혼합', '입력\n$3/MTok'],
+    datasets: [{
+      label: '비용 (USD)',
+      data: [9.18, 7.08, 6.33, 2.11, 0.002],
+      backgroundColor: [C.accent, C.purple, C.blue, C.orange, C.muted],
+      borderRadius: 6, borderSkipped: false,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => ' $' + c.parsed.y.toFixed(3) } }
+    },
+    scales: {
+      y: { beginAtZero: true, ticks: { callback: v => '$' + v }, grid: { color: '#1e2d3f' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+/* ════════════════════════════════════════════
+   4. TOOL BAR (horizontal)
+   ════════════════════════════════════════════ */
+new Chart(document.getElementById('toolBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Bash', 'TaskUpdate', 'Read', 'TaskCreate', 'Agent', 'Write', 'Edit', 'ToolSearch', 'Skill', 'WebFetch'],
+    datasets: [{
+      label: '호출',
+      data: [47, 44, 26, 23, 19, 17, 12, 7, 4, 2],
+      backgroundColor: [C.blue,C.accent,C.green,C.amber,C.orange,C.purple,C.blue,C.accent,C.green,C.amber],
+      borderRadius: 4, borderSkipped: false,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, grid: { color: '#1e2d3f' } },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+/* ════════════════════════════════════════════
+   5. ORCH PIE
+   ════════════════════════════════════════════ */
+new Chart(document.getElementById('orchPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['파일 조작 (Read/Write/Edit)', '오케스트레이션 (Task/Skill/Tool)', '실행 (Bash)', '에이전트 생성 (Agent)', '조사 (WebFetch)'],
+    datasets: [{
+      data: [55, 78, 47, 19, 2],
+      backgroundColor: [C.green, C.accent, C.blue, C.orange, C.muted],
+      borderColor: '#0f172a', borderWidth: 3, hoverOffset: 6,
+    }]
+  },
+  options: {
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 }, boxWidth: 12 } },
+      tooltip: { callbacks: { label: c => ' ' + c.parsed + '회' } }
+    }
+  }
+});
+
+/* ════════════════════════════════════════════
+   6. PLAN BAR
+   ════════════════════════════════════════════ */
+new Chart(document.getElementById('planBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Pro ($20/월)', 'Max $100/월 ★', 'Max $200/월'],
+    datasets: [{
+      label: '유사 세션 수',
+      data: [1, 4, 16],
+      backgroundColor: [C.red, C.accent, C.green],
+      borderRadius: 8, borderSkipped: false,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => ' 월 ~' + c.parsed.y + '회' } }
+    },
+    scales: {
+      y: { beginAtZero: true, ticks: { stepSize: 2 }, grid: { color: '#1e2d3f' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+/* ════════════════════════════════════════════
+   7. TASK TABLE
+   ════════════════════════════════════════════ */
+const TASKS = [
+  { id: 5,  name: '홈페이지',            tok: 19895, parallel: false },
+  { id: 6,  name: '설정 모달',           tok: 16484, parallel: false },
+  { id: 7,  name: '3패널 레이아웃',      tok: 13650, parallel: false },
+  { id: 8,  name: '날짜 사이드바 (DnD)', tok: 50727, parallel: false },
+  { id: 9,  name: '슬롯 상세 + 장소 목록',tok: 19934, parallel: false },
+  { id: 10, name: '히스토리 패널',        tok: 21285, parallel: false },
+  { id: 11, name: 'Google Maps 패널',    tok: 18885, parallel: false },
+  { id: 12, name: '장소 검색 라이브러리', tok: 26849, parallel: false },
+  { id: 13, name: '커맨드바 — 검색 모드', tok: 27439, parallel: false },
+  { id: 14, name: 'LLM 클라이언트',      tok: null,  parallel: true  },
+  { id: 15, name: '커맨드바 — 플랜 모드', tok: 20258, parallel: false },
+  { id: 16, name: '최종 연결 & 오류 처리',tok: 15627, parallel: false },
+];
+const maxTok = Math.max(...TASKS.filter(t => t.tok).map(t => t.tok));
+const tbody = document.getElementById('taskTable');
+let total = 0;
+TASKS.forEach(t => {
+  const pct = t.tok ? Math.round(t.tok / maxTok * 100) : 0;
+  const cost = t.tok ? (t.tok * 0.55 * 3 / 1e6 + t.tok * 0.45 * 15 / 1e6) : null;
+  if (cost) total += cost;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="color:var(--muted);font-weight:700">${t.id}</td>
+    <td style="color:#fff">${t.name}</td>
+    <td style="font-variant-numeric:tabular-nums">${t.tok ? t.tok.toLocaleString() : '—'}</td>
+    <td>
+      ${t.tok ? `<div style="display:flex;align-items:center;gap:6px">
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <span style="color:var(--muted);font-size:11px">${pct}%</span>
+      </div>` : '<span style="color:var(--muted);font-size:11px">이전 컨텍스트</span>'}
+    </td>
+    <td style="color:var(--green)">${cost ? '$' + cost.toFixed(3) : '—'}</td>
+    <td>${t.parallel ? '<span style="background:#14532d;color:#86efac;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px">병렬</span>' : ''}</td>
+  `;
+  tbody.appendChild(tr);
+});
+const tfoot = document.createElement('tr');
+tfoot.innerHTML = `
+  <td colspan="2" style="font-weight:800;color:#fff;padding-top:14px">합계</td>
+  <td style="font-weight:700;padding-top:14px">251,033</td>
+  <td style="padding-top:14px"></td>
+  <td style="color:var(--green);font-weight:700;padding-top:14px">$${total.toFixed(2)}</td>
+  <td style="padding-top:14px"></td>
+`;
+tbody.appendChild(tfoot);
+</script>
+</body>
+</html>
