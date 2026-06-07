@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useTripStore } from '../stores/tripStore'
 import SettingsModal from '../components/shared/SettingsModal'
@@ -7,6 +7,8 @@ import DateSidebar from '../components/trip/DateSidebar'
 import SlotDetail from '../components/trip/SlotDetail'
 import HistoryPanel from '../components/trip/HistoryPanel'
 import MapPanel from '../components/trip/MapPanel'
+import CommandBar from '../components/trip/CommandBar'
+import type { Place } from '../types'
 
 export default function TripPage() {
   const { id } = useParams<{ id: string }>()
@@ -15,6 +17,8 @@ export default function TripPage() {
   const activeSlotId = useTripStore((s) => s.activeSlotId)
   const [historyCollapsed, setHistoryCollapsed] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [candidatePins, setCandidatePins] = useState<Place[]>([])
+  const focusSearchRef = useRef<(() => void) | null>(null)
 
   if (!trip) {
     return (
@@ -55,7 +59,7 @@ export default function TripPage() {
               <SlotDetail
                 tripId={trip.id}
                 slot={activeSlot}
-                onFocusSearch={() => {/* wired in Task 13 */}}
+                onFocusSearch={() => focusSearchRef.current?.()}
               />
             ) : (
               <div className="h-full flex items-center justify-center text-slate-600 text-sm text-center px-4">
@@ -67,7 +71,12 @@ export default function TripPage() {
 
         {/* Middle panel: map */}
         <div className="flex-1 relative overflow-hidden">
-          <MapPanel tripId={trip.id} />
+          <MapPanel tripId={trip.id} candidatePins={candidatePins} />
+          <CommandBar
+            tripId={trip.id}
+            onCandidatesChange={setCandidatePins}
+            focusRef={focusSearchRef}
+          />
         </div>
 
         {/* Collapse handle on the map/history divider */}
