@@ -32,6 +32,17 @@ export default function TripPage() {
   const onLeftResize = usePanelResize(leftPanelWidth, setLeftPanelWidth, 200, 480)
   const onRightResize = usePanelResize(rightPanelWidth, setRightPanelWidth, 150, 400)
 
+  const googleMapsApiKey = useSettingsStore((s) => s.googleMapsApiKey)
+  const llmProvider = useSettingsStore((s) => s.llmProvider)
+  const llmApiKey = useSettingsStore((s) => {
+    const { llmProvider: provider, apiKeys } = s
+    return provider === 'ollama' ? 'ollama' : apiKeys[provider]
+  })
+
+  const missingKeys: string[] = []
+  if (!googleMapsApiKey) missingKeys.push('Google Maps API key')
+  if (!llmApiKey) missingKeys.push(`${llmProvider} API key`)
+
   if (!trip) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
@@ -44,16 +55,6 @@ export default function TripPage() {
   }
 
   const activeSlot = trip.slots.find((s) => s.id === activeSlotId) ?? null
-
-  const googleMapsApiKey = useSettingsStore((s) => s.googleMapsApiKey)
-  const llmApiKey = useSettingsStore((s) => {
-    const { llmProvider, apiKeys } = s
-    return llmProvider === 'ollama' ? 'ollama' : apiKeys[llmProvider]
-  })
-
-  const missingKeys: string[] = []
-  if (!googleMapsApiKey) missingKeys.push('Google Maps API key')
-  if (!llmApiKey) missingKeys.push(`${useSettingsStore.getState().llmProvider} API key`)
 
   return (
     <div className="h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden">
