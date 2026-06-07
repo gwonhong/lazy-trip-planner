@@ -16,15 +16,18 @@ const MODELS: Record<LlmProvider, { value: string; label: string }[]> = {
     { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' },
   ],
   openai: [
-    { value: 'gpt-4o', label: 'GPT-4o' },
-    { value: 'gpt-4o-mini', label: 'GPT-4o mini' },
-    { value: 'o3', label: 'o3' },
-    { value: 'o4-mini', label: 'o4-mini' },
+    { value: 'gpt-5.5', label: 'GPT-5.5' },
+    { value: 'gpt-5.4-pro', label: 'GPT-5.4 Pro' },
+    { value: 'gpt-5.4', label: 'GPT-5.4' },
+    { value: 'gpt-5.4-mini', label: 'GPT-5.4 mini' },
+    { value: 'gpt-5.4-nano', label: 'GPT-5.4 nano' },
   ],
   gemini: [
+    { value: 'gemini-3.5-flash', label: 'Gemini 3.5 Flash' },
+    { value: 'gemini-3.1-pro-preview', label: 'Gemini 3.1 Pro (Preview)' },
+    { value: 'gemini-3.1-flash-lite', label: 'Gemini 3.1 Flash Lite' },
     { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
     { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
-    { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
   ],
   ollama: [],
 }

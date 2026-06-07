@@ -11,7 +11,7 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       llmProvider: 'anthropic',
       apiKeys: { anthropic: '', openai: '', gemini: '', ollama: '' },
-      models: { anthropic: 'claude-sonnet-4-6', openai: 'gpt-4o', gemini: 'gemini-2.0-flash', ollama: 'llama3.1' },
+      models: { anthropic: 'claude-sonnet-4-6', openai: 'gpt-5.5', gemini: 'gemini-3.5-flash', ollama: 'llama3.1' },
       googleMapsApiKey: '',
       updateSetting: (key, value) => set({ [key]: value } as Partial<SettingsState>),
     }),
