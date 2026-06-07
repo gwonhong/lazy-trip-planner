@@ -142,7 +142,7 @@ export default function CommandBar({ tripId, onCandidatesChange, focusRef }: Pro
   }
 
   async function executePlanMode(userQuery: string) {
-    const { llmProvider, apiKeys, googleMapsApiKey: mapsKey } = useSettingsStore.getState()
+    const { llmProvider, apiKeys, models, googleMapsApiKey: mapsKey } = useSettingsStore.getState()
     const apiKey = apiKeys[llmProvider]
 
     if (!apiKey && llmProvider !== 'ollama') {
@@ -155,7 +155,7 @@ export default function CommandBar({ tripId, onCandidatesChange, focusRef }: Pro
     setCommentary(null)
 
     try {
-      const client = createLlmClient(llmProvider, apiKey)
+      const client = createLlmClient(llmProvider, apiKey, models[llmProvider])
       const scope = useTripStore.getState().llmScope
       const currentTrip = useTripStore.getState().trips.find((t) => t.id === tripId)!
       const currentSlot = currentTrip.slots.find((s) => s.id === useTripStore.getState().activeSlotId)

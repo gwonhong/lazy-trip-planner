@@ -2,7 +2,8 @@ import type { LlmClient, LlmMessage, LlmTool, LlmResponse } from './index'
 
 export class AnthropicClient implements LlmClient {
   private apiKey: string
-  constructor(apiKey: string) { this.apiKey = apiKey }
+  private model: string
+  constructor(apiKey: string, model: string) { this.apiKey = apiKey; this.model = model }
 
   async complete(messages: LlmMessage[], tools?: LlmTool[]): Promise<LlmResponse> {
     const system = messages.find((m) => m.role === 'system')?.content
@@ -11,7 +12,7 @@ export class AnthropicClient implements LlmClient {
       .map((m) => ({ role: m.role === 'tool' ? 'user' : m.role, content: m.content }))
 
     const body: Record<string, unknown> = {
-      model: 'claude-sonnet-4-6',
+      model: this.model,
       max_tokens: 4096,
       messages: chatMessages,
     }
